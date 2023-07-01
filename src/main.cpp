@@ -4,7 +4,7 @@
 #include "bluetooth.h"
 #include "png_images.h"
 
-#define FONT_4 4
+#define HEADER_FONT 4
 
 TFT_eSPI tft = TFT_eSPI();
 int lcdBacklightBrightness = 120;
@@ -45,7 +45,7 @@ void setup() {
 
     tft.setTextSize(1);
     tft.setTextColor(TFT_WHITE, TFT_DARKGREY);
-    tft.drawString("Bluetooth", 16, 8, FONT_4);
+    tft.drawString("Bluetooth", 16, 8, HEADER_FONT);
 
     tft.fillRect(272, 12, 32, 16, TFT_WHITE);
     tft.fillRect(304, 16, 4, 8, TFT_WHITE);
