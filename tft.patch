@@ -1,0 +1,21 @@
+diff -ru0 .pio/libdeps/lilygo-t-display-s3/TFT_eSPI/TFT_Drivers/ST7789_Init.h /data2/sam/work/github/Xinyuan-LilyGO/T-Display-S3/lib/TFT_eSPI/TFT_Drivers/ST7789_Init.h
+--- .pio/libdeps/lilygo-t-display-s3/TFT_eSPI/TFT_Drivers/ST7789_Init.h	2023-01-13 03:12:05.000000000 +0100
++++ /data2/sam/work/github/Xinyuan-LilyGO/T-Display-S3/lib/TFT_eSPI/TFT_Drivers/ST7789_Init.h	2023-06-11 16:16:09.531314589 +0200
+@@ -143,0 +144,2 @@
++  writecommand(0x3A);
++  writedata(0x05);
+diff -ru0 .pio/libdeps/lilygo-t-display-s3/TFT_eSPI/User_Setups/Setup206_LilyGo_T_Display_S3.h /data2/sam/work/github/Xinyuan-LilyGO/T-Display-S3/lib/TFT_eSPI/User_Setups/Setup206_LilyGo_T_Display_S3.h
+--- .pio/libdeps/lilygo-t-display-s3/TFT_eSPI/User_Setups/Setup206_LilyGo_T_Display_S3.h	2023-01-13 03:12:05.000000000 +0100
++++ /data2/sam/work/github/Xinyuan-LilyGO/T-Display-S3/lib/TFT_eSPI/User_Setups/Setup206_LilyGo_T_Display_S3.h	2023-06-11 16:16:09.535314534 +0200
+@@ -6 +6 @@
+-#define INIT_SEQUENCE_3 // Using this initialisation sequence improves the display image
++// #define INIT_SEQUENCE_3 // Using this initialisation sequence improves the display image
+diff -ru0 .pio/libdeps/lilygo-t-display-s3/TFT_eSPI/User_Setup_Select.h /data2/sam/work/github/Xinyuan-LilyGO/T-Display-S3/lib/TFT_eSPI/User_Setup_Select.h
+--- .pio/libdeps/lilygo-t-display-s3/TFT_eSPI/User_Setup_Select.h	2023-01-13 03:12:05.000000000 +0100
++++ /data2/sam/work/github/Xinyuan-LilyGO/T-Display-S3/lib/TFT_eSPI/User_Setup_Select.h	2023-06-11 16:16:09.533314561 +0200
+@@ -30 +30 @@
+-#include <User_Setup.h>           // Default setup is root library folder
++// #include <User_Setup.h>           // Default setup is root library folder
+@@ -131 +131 @@
+-//#include <User_Setups/Setup206_LilyGo_T_Display_S3.h>
++#include <User_Setups/Setup206_LilyGo_T_Display_S3.h>
