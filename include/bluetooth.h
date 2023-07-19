@@ -1,7 +1,7 @@
 #ifndef BLUETOOTH_H
 #define BLUETOOTH_H
 
-#include "BLEDevice.h"
+#include <BLEDevice.h>
 
 static BLEUUID infoServiceUUID("be75903a-14b3-11ec-a7df-e069953c4ba2");
 static BLEUUID pitchRollCharUUID("d6c77054-14b3-11ec-b16c-e069953c4ba2");

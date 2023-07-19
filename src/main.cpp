@@ -4,10 +4,11 @@
 #include "bluetooth.h"
 #include "png_images.h"
 
+#define DISPLAY_BRIGHTNESS_MAX 252
 #define HEADER_FONT 4
 
 TFT_eSPI tft = TFT_eSPI();
-int lcdBacklightBrightness = 120;
+int lcdBacklightBrightness = DISPLAY_BRIGHTNESS_MAX;
 
 Bluetooth bluetooth;
 
@@ -52,6 +53,10 @@ void setup() {
     drawBatteryIndicator();
 
     tft.fillRect(0, 36, 320, 170 - 36, TFT_BLACK);
+
+    delay(500);
+    drawBatteryIndicator();
+
     drawBluetoothSearchingImage(136, 79);
     bluetooth.initialize();
     tft.fillRect(136, 79, 48, 48, TFT_BLACK);
