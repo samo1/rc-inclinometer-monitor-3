@@ -18,6 +18,17 @@ Scheduler scheduler;
 BatteryTask batteryTask(&scheduler, &tft);
 Bluetooth bluetooth;
 
+static void printHeaderText(const char* str) {
+    tft.fillRect(0, 0, 272, 36, TFT_DARKGREY);
+    tft.setTextSize(1);
+    tft.setTextColor(TFT_WHITE, TFT_DARKGREY);
+    tft.drawString(str, 16, 8, HEADER_FONT);
+}
+
+static void clearMainArea() {
+    tft.fillRect(0, 36, 320, 170 - 36, TFT_BLACK);
+}
+
 void setup() {
     pinMode(PIN_POWER_ON, OUTPUT);
     digitalWrite(PIN_POWER_ON, HIGH);
@@ -34,15 +45,13 @@ void setup() {
     tft.fillScreen(TFT_BLACK);
     tft.fillRect(0, 0, 320, 36, TFT_DARKGREY);
 
-    tft.setTextSize(1);
-    tft.setTextColor(TFT_WHITE, TFT_DARKGREY);
-    tft.drawString("Bluetooth", 16, 8, HEADER_FONT);
+    printHeaderText("Bluetooth");
 
     tft.fillRect(272, 12, 32, 16, TFT_WHITE);
     tft.fillRect(304, 16, 4, 8, TFT_WHITE);
     batteryTask.drawBatteryIndicator();
 
-    tft.fillRect(0, 36, 320, 170 - 36, TFT_BLACK);
+    clearMainArea();
 
     delay(500);
     batteryTask.drawBatteryIndicator();
