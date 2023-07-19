@@ -6,7 +6,7 @@ bool BatteryTask::Callback() {
 }
 
 void BatteryTask::drawBatteryIndicator() {
-    double batteryVoltage = (analogRead(4) * 2 * 3.3) / 4096;
+    double batteryVoltage = (analogRead(BAT_VOLT) * 2 * 3.3) / 4096;
 
     double batteryPercentage = (batteryVoltage - 3.7) / (4.2 - 3.7);
     if (batteryPercentage < 0) {
