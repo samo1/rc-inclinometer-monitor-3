@@ -2,6 +2,7 @@
 
 #include <Arduino.h>
 #include <TaskScheduler.h>
+#include <ezButton.h>
 #include "pin_config.h"
 #include <TFT_eSPI.h>
 #include "battery_task.h"
@@ -17,6 +18,8 @@ int lcdBacklightBrightness = DISPLAY_BRIGHTNESS_MAX;
 Scheduler scheduler;
 BatteryTask batteryTask(&scheduler, &tft);
 Bluetooth bluetooth;
+ezButton buttonUp(14);
+ezButton buttonDown(0);
 
 static void printHeaderText(const char* str) {
     tft.fillRect(0, 0, 272, 36, TFT_DARKGREY);
@@ -32,6 +35,9 @@ static void clearMainArea() {
 void setup() {
     pinMode(PIN_POWER_ON, OUTPUT);
     digitalWrite(PIN_POWER_ON, HIGH);
+
+    buttonUp.setDebounceTime(50);
+    buttonDown.setDebounceTime(50);
 
     analogReadResolution(12);
 
@@ -65,4 +71,6 @@ void setup() {
 
 void loop() {
     scheduler.execute();
+    buttonUp.loop();
+    buttonDown.loop();
 }
