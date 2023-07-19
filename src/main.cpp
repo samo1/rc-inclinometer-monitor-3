@@ -9,17 +9,16 @@
 #include "bluetooth.h"
 #include "png_images.h"
 
-#define DISPLAY_BRIGHTNESS_MAX 252
 #define HEADER_FONT 4
 
 TFT_eSPI tft = TFT_eSPI();
-int lcdBacklightBrightness = DISPLAY_BRIGHTNESS_MAX;
+int lcdBacklightBrightness = 255;
 
 Scheduler scheduler;
 BatteryTask batteryTask(&scheduler, &tft);
 Bluetooth bluetooth;
-ezButton buttonUp(14);
-ezButton buttonDown(0);
+ezButton buttonUp(BUTTON_2);
+ezButton buttonDown(BUTTON_1);
 
 static void printHeaderText(const char* str) {
     tft.fillRect(0, 0, 272, 36, TFT_DARKGREY);
@@ -44,8 +43,8 @@ void setup() {
     tft.init();
     tft.setRotation(1);
 
-    ledcSetup(0, 10000, 8);
-    ledcAttachPin(38, 0);
+    ledcSetup(0, 2000, 8);
+    ledcAttachPin(LCD_BL, 0);
     ledcWrite(0, lcdBacklightBrightness);
 
     tft.fillScreen(TFT_BLACK);
