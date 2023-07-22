@@ -1,21 +1,20 @@
-#define _TASK_OO_CALLBACKS
-
 #include <Arduino.h>
-#include <TaskScheduler.h>
+#include <TaskSchedulerDeclarations.h>
 #include <ezButton.h>
 #include "pin_config.h"
 #include <TFT_eSPI.h>
 #include "battery_task.h"
 #include "bluetooth.h"
+#include "lcd_power_task.h"
 #include "png_images.h"
 
 #define HEADER_FONT 4
 
 TFT_eSPI tft = TFT_eSPI();
-int lcdBacklightBrightness = 255;
 
 Scheduler scheduler;
-BatteryTask batteryTask(&scheduler, &tft);
+BatteryTask batteryTask(&scheduler);
+LcdPowerTask lcdPowerTask(&scheduler);
 Bluetooth bluetooth;
 ezButton buttonUp(BUTTON_2);
 ezButton buttonDown(BUTTON_1);
@@ -32,8 +31,8 @@ static void clearMainArea() {
 }
 
 void setup() {
-    pinMode(PIN_POWER_ON, OUTPUT);
-    digitalWrite(PIN_POWER_ON, HIGH);
+    pinMode(LCD_POWER_ON, OUTPUT);
+    digitalWrite(LCD_POWER_ON, HIGH);
 
     buttonUp.setDebounceTime(50);
     buttonDown.setDebounceTime(50);
@@ -43,9 +42,7 @@ void setup() {
     tft.init();
     tft.setRotation(1);
 
-    ledcSetup(0, 2000, 8);
-    ledcAttachPin(LCD_BL, 0);
-    ledcWrite(0, lcdBacklightBrightness);
+    lcdPowerTask.turnLcdOn();
 
     tft.fillScreen(TFT_BLACK);
     tft.fillRect(0, 0, 320, 36, TFT_DARKGREY);
@@ -66,10 +63,17 @@ void setup() {
     bluetooth.initialize();
     tft.fillRect(136, 79, 48, 48, TFT_BLACK);
     drawBluetoothDisabledImage(136, 79);
+
+    lcdPowerTask.turnLcdOffAfterDelay();
 }
 
 void loop() {
     scheduler.execute();
     buttonUp.loop();
     buttonDown.loop();
+
+    if (buttonUp.isPressed() || buttonDown.isPressed()) {
+        lcdPowerTask.turnLcdOn();
+        lcdPowerTask.turnLcdOffAfterDelay();
+    }
 }

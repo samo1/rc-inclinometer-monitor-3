@@ -17,6 +17,6 @@ void BatteryTask::drawBatteryIndicator() {
     }
 
     int batteryIndicatorWidth = static_cast<int>(24 * batteryPercentage);
-    tft->fillRect(276 + batteryIndicatorWidth, 16, 24 - batteryIndicatorWidth, 8, TFT_BLACK);
-    tft->fillRect(276, 16, batteryIndicatorWidth, 8, color);
+    tft.fillRect(276 + batteryIndicatorWidth, 16, 24 - batteryIndicatorWidth, 8, TFT_BLACK);
+    tft.fillRect(276, 16, batteryIndicatorWidth, 8, color);
 }
