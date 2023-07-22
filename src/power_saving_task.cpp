@@ -1,28 +1,29 @@
-#include "lcd_power_task.h"
+#include "power_saving_task.h"
 
-bool LcdPowerTask::Callback() {
+bool PowerSavingTask::Callback() {
     turnLcdOff();
     return false;
 }
 
-bool LcdPowerTask::OnEnable() {
-    return true;
-}
-
-void LcdPowerTask::turnLcdOn() {
+void PowerSavingTask::turnLcdOn() {
     ledcSetup(LEDC_CHANNEL_0, 2000, 8);
     ledcAttachPin(LCD_BL, LEDC_CHANNEL_0);
     ledcWrite(LEDC_CHANNEL_0, MAX_BRIGHNESS);
     // digitalWrite(LCD_POWER_ON, HIGH);
 }
 
-void LcdPowerTask::turnLcdOff() {
+void PowerSavingTask::turnLcdOff() {
     ledcSetup(LEDC_CHANNEL_0, 2000, 8);
     ledcAttachPin(LCD_BL, LEDC_CHANNEL_0);
     ledcWrite(LEDC_CHANNEL_0, MIN_BRIGHNESS);
     // digitalWrite(LCD_POWER_ON, LOW);
 }
 
-bool LcdPowerTask::turnLcdOffAfterDelay() {
+bool PowerSavingTask::turnLcdOffAfterDelay() {
     return restartDelayed(DELAY_MS);
+}
+
+void PowerSavingTask::wakeUp() {
+    turnLcdOn();
+    turnLcdOffAfterDelay();
 }

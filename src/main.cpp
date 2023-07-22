@@ -5,7 +5,7 @@
 #include <TFT_eSPI.h>
 #include "battery_task.h"
 #include "bluetooth.h"
-#include "lcd_power_task.h"
+#include "power_saving_task.h"
 #include "png_images.h"
 
 #define HEADER_FONT 4
@@ -14,7 +14,7 @@ TFT_eSPI tft = TFT_eSPI();
 
 Scheduler scheduler;
 BatteryTask batteryTask(&scheduler);
-LcdPowerTask lcdPowerTask(&scheduler);
+PowerSavingTask powerSavingTask(&scheduler);
 Bluetooth bluetooth;
 ezButton buttonUp(BUTTON_2);
 ezButton buttonDown(BUTTON_1);
@@ -42,8 +42,6 @@ void setup() {
     tft.init();
     tft.setRotation(1);
 
-    lcdPowerTask.turnLcdOn();
-
     tft.fillScreen(TFT_BLACK);
     tft.fillRect(0, 0, 320, 36, TFT_DARKGREY);
 
@@ -64,7 +62,7 @@ void setup() {
     tft.fillRect(136, 79, 48, 48, TFT_BLACK);
     drawBluetoothDisabledImage(136, 79);
 
-    lcdPowerTask.turnLcdOffAfterDelay();
+    powerSavingTask.wakeUp();
 }
 
 void loop() {
@@ -73,7 +71,6 @@ void loop() {
     buttonDown.loop();
 
     if (buttonUp.isPressed() || buttonDown.isPressed()) {
-        lcdPowerTask.turnLcdOn();
-        lcdPowerTask.turnLcdOffAfterDelay();
+        powerSavingTask.wakeUp();
     }
 }
