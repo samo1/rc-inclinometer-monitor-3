@@ -4,7 +4,7 @@
 
 bool BatteryTask::Callback() {
     measureAndDrawBatteryIndicator();
-    return false;
+    return true;
 }
 
 void BatteryTask::measureAndDrawBatteryIndicator() {

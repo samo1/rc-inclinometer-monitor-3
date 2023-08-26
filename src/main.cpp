@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <TaskSchedulerDeclarations.h>
 #include <ezButton.h>
 #include "pin_config.h"
 #include <TFT_eSPI.h>
@@ -9,12 +8,12 @@
 #include "display_header.h"
 #include "display_main_area.h"
 #include "power_saving_task.h"
+#include "task_scheduler.h"
 
 TFT_eSPI tft = TFT_eSPI();
 
-Scheduler scheduler;
-BatteryTask batteryTask(&scheduler);
-PowerSavingTask powerSavingTask(&scheduler);
+BatteryTask batteryTask;
+PowerSavingTask powerSavingTask;
 Bluetooth bluetooth;
 ezButton buttonUp(BUTTON_2);
 ezButton buttonDown(BUTTON_1);

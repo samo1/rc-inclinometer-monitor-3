@@ -1,8 +1,13 @@
 #include "power_saving_task.h"
 
+#define DELAY_MS 30000
+#define MIN_BRIGHNESS 0
+#define MAX_BRIGHNESS 255
+#define LEDC_CHANNEL_0 0
+
 bool PowerSavingTask::Callback() {
     turnLcdOff();
-    return false;
+    return true;
 }
 
 void PowerSavingTask::turnLcdOn() {

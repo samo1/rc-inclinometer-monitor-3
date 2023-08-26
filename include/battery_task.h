@@ -1,11 +1,11 @@
 #ifndef BATTERY_TASK_H
 #define BATTERY_TASK_H
 
-#include <TaskSchedulerDeclarations.h>
+#include "task_scheduler.h"
 
 class BatteryTask : public Task {
 public:
-    explicit BatteryTask(Scheduler* s) : Task(5000, TASK_FOREVER, s, false) {
+    explicit BatteryTask() : Task(5000, TASK_FOREVER, &scheduler, false) {
         setSchedulingOption(TASK_INTERVAL);
     }
     bool Callback() override;

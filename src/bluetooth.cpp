@@ -2,18 +2,18 @@
 #include "debug.h"
 #include "display_header.h"
 
+#define BLUETOOTH_RECONNECT_DELAY_MS 5000
+
+bool scanInProgress = false;
+
+void scanCompleteCallback(BLEScanResults scanResults) {
+    DEBUG_PRINTLN("Scan complete");
+    scanInProgress = false;
+}
+
 void Bluetooth::initialize() {
-    DisplayHeader::printText("Connecting...");
-    DisplayHeader::drawBluetoothSearchingImage();
-
     BLEDevice::init("");
-
-    BLEScan* pBLEScan = BLEDevice::getScan();
-    pBLEScan->setAdvertisedDeviceCallbacks(this);
-    pBLEScan->setInterval(1349);
-    pBLEScan->setWindow(449);
-    pBLEScan->setActiveScan(true);
-    pBLEScan->start(5, false);
+    startScan();
 }
 
 void Bluetooth::loop() {
@@ -22,30 +22,61 @@ void Bluetooth::loop() {
         if (!connect()) {
             disconnect();
         }
+    } else {
+        // DEBUG_PRINT("BLUETOOTH connected="); DEBUG_PRINT(connected);
+        // DEBUG_PRINT(" connectInProgress="); DEBUG_PRINT(connectInProgress);
+        // DEBUG_PRINT(" doReconnect="); DEBUG_PRINT(doReconnect);
+        // DEBUG_PRINT(" scanInProgress="); DEBUG_PRINT(scanInProgress);
+        // DEBUG_PRINTLN("");
+
+        if (!connected && !connectInProgress && !doReconnect && !scanInProgress) {
+            doReconnect = true;
+            bluetoothReconnectTask.restartDelayed(BLUETOOTH_RECONNECT_DELAY_MS);
+        }
     }
 }
 
 void Bluetooth::onResult(BLEAdvertisedDevice advertisedDevice) {
     if (advertisedDevice.haveServiceUUID() && advertisedDevice.isAdvertisingService(infoServiceUUID)) {
         BLEDevice::getScan()->stop();
+        DEBUG_PRINTLN("Device found, scan stopped");
+        scanInProgress = false;
         serverDevice = new BLEAdvertisedDevice(advertisedDevice);
         doConnect = true;
     }
 }
 
 void Bluetooth::onConnect(BLEClient *pClient) {
+    connectInProgress = false;
     connected = true;
     DisplayHeader::printText("Connected");
     DisplayHeader::drawBluetoothConnectedImage();
 }
 
 void Bluetooth::onDisconnect(BLEClient *pClient) {
+    connectInProgress = false;
     connected = false;
     DisplayHeader::printText("Disconnected");
     DisplayHeader::drawBluetoothDisabledImage();
 }
 
+void Bluetooth::startScan() {
+    DisplayHeader::printText("Connecting...");
+    DisplayHeader::drawBluetoothSearchingImage();
+
+    scanInProgress = true;
+
+    BLEScan* pBLEScan = BLEDevice::getScan();
+    pBLEScan->setAdvertisedDeviceCallbacks(this);
+    pBLEScan->setInterval(1349);
+    pBLEScan->setWindow(449);
+    pBLEScan->setActiveScan(true);
+    pBLEScan->start(5, &scanCompleteCallback, false);
+}
+
 bool Bluetooth::connect() {
+    connectInProgress = true;
+
     delete client;
     client = BLEDevice::createClient();
     client->setClientCallbacks(this);
@@ -53,10 +84,10 @@ bool Bluetooth::connect() {
     DEBUG_PRINTLN("Connecting to remote BLE device");
     DEBUG_PRINTLN(serverDevice->getAddress().toString().c_str());
 
-    bool c = client->connect(serverDevice);
+    bool ok = client->connect(serverDevice);
     client->setMTU(517);
 
-    if (!c) {
+    if (!ok) {
         DEBUG_PRINTLN("Connection failed");
         return false;
     }
@@ -82,4 +113,12 @@ bool Bluetooth::connect() {
 
 void Bluetooth::disconnect() {
     client->disconnect();
+}
+
+bool BluetoothReconnectTask::Callback() {
+    bluetooth.doReconnect = false;
+    if (!bluetooth.connected && !bluetooth.connectInProgress && !scanInProgress) {
+        bluetooth.startScan();
+    }
+    return true;
 }
