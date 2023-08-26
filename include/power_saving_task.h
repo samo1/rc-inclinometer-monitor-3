@@ -4,9 +4,9 @@
 #include <TaskSchedulerDeclarations.h>
 #include "lcd.h"
 
-#define DELAY_MS 10000
+#define DELAY_MS 30000
 #define MIN_BRIGHNESS 0
-#define MAX_BRIGHNESS 252
+#define MAX_BRIGHNESS 255
 #define LEDC_CHANNEL_0 0
 
 class PowerSavingTask : public Task {

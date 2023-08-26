@@ -2,7 +2,6 @@
 #define BATTERY_TASK_H
 
 #include <TaskSchedulerDeclarations.h>
-#include "lcd.h"
 
 class BatteryTask : public Task {
 public:
@@ -10,9 +9,9 @@ public:
         setSchedulingOption(TASK_INTERVAL);
     }
     bool Callback() override;
-    void drawBatteryIndicator();
+    static void measureAndDrawBatteryIndicator();
 private:
-    uint32_t color = TFT_GREEN;
+    static double measureBatteryPercentage();
 };
 
 #endif //BATTERY_TASK_H

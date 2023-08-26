@@ -1,13 +1,19 @@
 #include "battery_task.h"
+#include "display_header.h"
+#include <Arduino.h>
 
 bool BatteryTask::Callback() {
-    drawBatteryIndicator();
+    measureAndDrawBatteryIndicator();
     return false;
 }
 
-void BatteryTask::drawBatteryIndicator() {
-    double batteryVoltage = (analogRead(BAT_VOLT) * 2 * 3.3) / 4096;
+void BatteryTask::measureAndDrawBatteryIndicator() {
+    double percentage = measureBatteryPercentage();
+    DisplayHeader::drawBatteryIndicator(percentage);
+}
 
+double BatteryTask::measureBatteryPercentage() {
+    double batteryVoltage = (analogRead(BAT_VOLT) * 2 * 3.3) / 4096;
     double batteryPercentage = (batteryVoltage - 3.7) / (4.2 - 3.7);
     if (batteryPercentage < 0) {
         batteryPercentage = 0;
@@ -15,8 +21,5 @@ void BatteryTask::drawBatteryIndicator() {
     if (batteryPercentage > 1) {
         batteryPercentage = 1;
     }
-
-    int batteryIndicatorWidth = static_cast<int>(24 * batteryPercentage);
-    tft.fillRect(276 + batteryIndicatorWidth, 16, 24 - batteryIndicatorWidth, 8, TFT_BLACK);
-    tft.fillRect(276, 16, batteryIndicatorWidth, 8, color);
+    return batteryPercentage;
 }

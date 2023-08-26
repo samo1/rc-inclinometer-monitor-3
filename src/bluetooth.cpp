@@ -1,11 +1,13 @@
 #include "bluetooth.h"
+#include "debug.h"
+#include "display_header.h"
 
 void Bluetooth::initialize() {
+    DisplayHeader::printText("Connecting...");
+    DisplayHeader::drawBluetoothSearchingImage();
+
     BLEDevice::init("");
 
-    // Retrieve a Scanner and set the callback we want to use to be informed when we
-    // have detected a new device.  Specify that we want active scanning and start the
-    // scan to run for 5 seconds.
     BLEScan* pBLEScan = BLEDevice::getScan();
     pBLEScan->setAdvertisedDeviceCallbacks(this);
     pBLEScan->setInterval(1349);
@@ -14,19 +16,70 @@ void Bluetooth::initialize() {
     pBLEScan->start(5, false);
 }
 
+void Bluetooth::loop() {
+    if (doConnect) {
+        doConnect = false;
+        if (!connect()) {
+            disconnect();
+        }
+    }
+}
+
 void Bluetooth::onResult(BLEAdvertisedDevice advertisedDevice) {
     if (advertisedDevice.haveServiceUUID() && advertisedDevice.isAdvertisingService(infoServiceUUID)) {
         BLEDevice::getScan()->stop();
-        myDevice = new BLEAdvertisedDevice(advertisedDevice);
+        serverDevice = new BLEAdvertisedDevice(advertisedDevice);
         doConnect = true;
-        doScan = true;
     }
 }
 
 void Bluetooth::onConnect(BLEClient *pClient) {
-
+    connected = true;
+    DisplayHeader::printText("Connected");
+    DisplayHeader::drawBluetoothConnectedImage();
 }
 
 void Bluetooth::onDisconnect(BLEClient *pClient) {
+    connected = false;
+    DisplayHeader::printText("Disconnected");
+    DisplayHeader::drawBluetoothDisabledImage();
+}
 
+bool Bluetooth::connect() {
+    delete client;
+    client = BLEDevice::createClient();
+    client->setClientCallbacks(this);
+
+    DEBUG_PRINTLN("Connecting to remote BLE device");
+    DEBUG_PRINTLN(serverDevice->getAddress().toString().c_str());
+
+    bool c = client->connect(serverDevice);
+    client->setMTU(517);
+
+    if (!c) {
+        DEBUG_PRINTLN("Connection failed");
+        return false;
+    }
+
+    DEBUG_PRINTLN("Connected, getting the service");
+
+    BLERemoteService* remoteService = client->getService(infoServiceUUID);
+    if (remoteService == nullptr) {
+        DEBUG_PRINTLN("Info service not found");
+        return false;
+    }
+
+    pitchRollChar = remoteService->getCharacteristic(pitchRollCharUUID);
+    if (pitchRollChar == nullptr) {
+        DEBUG_PRINTLN("Pitch-Roll characteristic not found");
+        return false;
+    }
+
+    // pitchRollChar->registerForNotify()
+
+    return true;
+}
+
+void Bluetooth::disconnect() {
+    client->disconnect();
 }

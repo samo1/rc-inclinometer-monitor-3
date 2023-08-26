@@ -29,7 +29,7 @@ int32_t ypos = 0;
 // line to the TFT. PNGdec generates the image line and a 1bpp mask.
 void pngDraw(PNGDRAW *pDraw) {
     uint16_t lineBuffer[MAX_IMAGE_WIDTH];          // Line buffer for rendering
-    uint8_t  maskBuffer[1 + MAX_IMAGE_WIDTH / 8];  // Mask buffer
+    uint8_t maskBuffer[1 + MAX_IMAGE_WIDTH / 8];  // Mask buffer
 
     png.getLineAsRGB565(pDraw, lineBuffer, PNG_RGB565_BIG_ENDIAN, 0xffffffff);
 
@@ -50,18 +50,20 @@ void drawImage(int32_t x, int32_t y, const unsigned char* data, int dataSize) {
     }
 }
 
-void drawBluetoothImage(int32_t x, int32_t y) {
-    drawImage(x, y, baseline_bluetooth_white_48dp, sizeof(baseline_bluetooth_white_48dp));
-}
+namespace PngImages {
+    void drawBluetoothImage(int32_t x, int32_t y) {
+        drawImage(x, y, baseline_bluetooth_white_24dp, sizeof(baseline_bluetooth_white_24dp));
+    }
 
-void drawBluetoothConnectedImage(int32_t x, int32_t y) {
-    drawImage(x, y, baseline_bluetooth_connected_white_48dp, sizeof(baseline_bluetooth_connected_white_48dp));
-}
+    void drawBluetoothConnectedImage(int32_t x, int32_t y) {
+        drawImage(x, y, baseline_bluetooth_connected_white_24dp, sizeof(baseline_bluetooth_connected_white_24dp));
+    }
 
-void drawBluetoothDisabledImage(int32_t x, int32_t y) {
-    drawImage(x, y, baseline_bluetooth_disabled_white_48dp, sizeof(baseline_bluetooth_disabled_white_48dp));
-}
+    void drawBluetoothDisabledImage(int32_t x, int32_t y) {
+        drawImage(x, y, baseline_bluetooth_disabled_white_24dp, sizeof(baseline_bluetooth_disabled_white_24dp));
+    }
 
-void drawBluetoothSearchingImage(int32_t x, int32_t y) {
-    drawImage(x, y, baseline_bluetooth_searching_white_48dp, sizeof(baseline_bluetooth_searching_white_48dp));
+    void drawBluetoothSearchingImage(int32_t x, int32_t y) {
+        drawImage(x, y, baseline_bluetooth_searching_white_24dp, sizeof(baseline_bluetooth_searching_white_24dp));
+    }
 }

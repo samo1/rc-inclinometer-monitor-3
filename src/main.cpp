@@ -5,10 +5,10 @@
 #include <TFT_eSPI.h>
 #include "battery_task.h"
 #include "bluetooth.h"
+#include "debug.h"
+#include "display_header.h"
+#include "display_main_area.h"
 #include "power_saving_task.h"
-#include "png_images.h"
-
-#define HEADER_FONT 4
 
 TFT_eSPI tft = TFT_eSPI();
 
@@ -19,18 +19,8 @@ Bluetooth bluetooth;
 ezButton buttonUp(BUTTON_2);
 ezButton buttonDown(BUTTON_1);
 
-static void printHeaderText(const char* str) {
-    tft.fillRect(0, 0, 272, 36, TFT_DARKGREY);
-    tft.setTextSize(1);
-    tft.setTextColor(TFT_WHITE, TFT_DARKGREY);
-    tft.drawString(str, 16, 8, HEADER_FONT);
-}
-
-static void clearMainArea() {
-    tft.fillRect(0, 36, 320, 170 - 36, TFT_BLACK);
-}
-
 void setup() {
+    DEBUG_INIT;
     pinMode(LCD_POWER_ON, OUTPUT);
     digitalWrite(LCD_POWER_ON, HIGH);
 
@@ -42,25 +32,19 @@ void setup() {
     tft.init();
     tft.setRotation(1);
 
-    tft.fillScreen(TFT_BLACK);
-    tft.fillRect(0, 0, 320, 36, TFT_DARKGREY);
+    DisplayMainArea::init();
 
-    printHeaderText("Bluetooth");
+    DisplayHeader::init();
+    DisplayHeader::printText("Starting...");
+    DisplayHeader::drawBluetoothImage();
+    DisplayHeader::drawBatteryOutline();
 
-    tft.fillRect(272, 12, 32, 16, TFT_WHITE);
-    tft.fillRect(304, 16, 4, 8, TFT_WHITE);
-    batteryTask.drawBatteryIndicator();
-
-    clearMainArea();
-
+    BatteryTask::measureAndDrawBatteryIndicator();
     delay(500);
-    batteryTask.drawBatteryIndicator();
+    BatteryTask::measureAndDrawBatteryIndicator();
     batteryTask.enable();
 
-    drawBluetoothSearchingImage(136, 79);
     bluetooth.initialize();
-    tft.fillRect(136, 79, 48, 48, TFT_BLACK);
-    drawBluetoothDisabledImage(136, 79);
 
     powerSavingTask.wakeUp();
 }
@@ -69,6 +53,7 @@ void loop() {
     scheduler.execute();
     buttonUp.loop();
     buttonDown.loop();
+    bluetooth.loop();
 
     if (buttonUp.isPressed() || buttonDown.isPressed()) {
         powerSavingTask.wakeUp();
