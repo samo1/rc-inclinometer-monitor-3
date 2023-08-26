@@ -16,6 +16,8 @@
 
 #define MAX_IMAGE_WIDTH 48 // Sets rendering line buffer lengths, adjust for your images
 
+namespace PngImages {
+
 PNG png;
 
 // Position variables must be global (PNGdec does not handle position coordinates)
@@ -50,20 +52,20 @@ void drawImage(int32_t x, int32_t y, const unsigned char* data, int dataSize) {
     }
 }
 
-namespace PngImages {
-    void drawBluetoothImage(int32_t x, int32_t y) {
-        drawImage(x, y, baseline_bluetooth_white_24dp, sizeof(baseline_bluetooth_white_24dp));
-    }
-
-    void drawBluetoothConnectedImage(int32_t x, int32_t y) {
-        drawImage(x, y, baseline_bluetooth_connected_white_24dp, sizeof(baseline_bluetooth_connected_white_24dp));
-    }
-
-    void drawBluetoothDisabledImage(int32_t x, int32_t y) {
-        drawImage(x, y, baseline_bluetooth_disabled_white_24dp, sizeof(baseline_bluetooth_disabled_white_24dp));
-    }
-
-    void drawBluetoothSearchingImage(int32_t x, int32_t y) {
-        drawImage(x, y, baseline_bluetooth_searching_white_24dp, sizeof(baseline_bluetooth_searching_white_24dp));
-    }
+void drawBluetoothImage(int32_t x, int32_t y) {
+    drawImage(x, y, baseline_bluetooth_white_24dp, sizeof(baseline_bluetooth_white_24dp));
 }
+
+void drawBluetoothConnectedImage(int32_t x, int32_t y) {
+    drawImage(x, y, baseline_bluetooth_connected_white_24dp, sizeof(baseline_bluetooth_connected_white_24dp));
+}
+
+void drawBluetoothDisabledImage(int32_t x, int32_t y) {
+    drawImage(x, y, baseline_bluetooth_disabled_white_24dp, sizeof(baseline_bluetooth_disabled_white_24dp));
+}
+
+void drawBluetoothSearchingImage(int32_t x, int32_t y) {
+    drawImage(x, y, baseline_bluetooth_searching_white_24dp, sizeof(baseline_bluetooth_searching_white_24dp));
+}
+
+} // namespace PngImages
