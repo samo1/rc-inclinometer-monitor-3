@@ -6,9 +6,24 @@
 
 bool scanInProgress = false;
 
-void scanCompleteCallback(BLEScanResults scanResults) {
+double pitch = 0.0;
+double roll = 0.0;
+
+static void scanCompleteCallback(BLEScanResults scanResults) {
     DEBUG_PRINTLN("Scan complete");
     scanInProgress = false;
+}
+
+static void pitchRollCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic,
+                                        uint8_t* pData, size_t length, bool isNotify) {
+    std::string stringData(pData, pData + length);
+    auto pos = stringData.find(':');
+    if (pos != std::string::npos) {
+        std::string pitchString = stringData.substr(0, pos);
+        std::string rollString = stringData.substr(pos + 1);
+        pitch = std::stod(pitchString);
+        roll = std::stod(rollString);
+    }
 }
 
 void Bluetooth::initialize() {
@@ -92,8 +107,6 @@ bool Bluetooth::connect() {
         return false;
     }
 
-    DEBUG_PRINTLN("Connected, getting the service");
-
     BLERemoteService* remoteService = client->getService(infoServiceUUID);
     if (remoteService == nullptr) {
         DEBUG_PRINTLN("Info service not found");
@@ -106,7 +119,9 @@ bool Bluetooth::connect() {
         return false;
     }
 
-    // pitchRollChar->registerForNotify()
+    if (pitchRollChar->canNotify()) {
+        pitchRollChar->registerForNotify(pitchRollCharNotifyCallback);
+    }
 
     return true;
 }
