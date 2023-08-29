@@ -1,5 +1,5 @@
 #include "display_main_area.h"
-#include "inclinometer_images.h"
+#include "gfx/inclinometer_images.h"
 #include <iomanip>
 #include <sstream>
 

@@ -11,7 +11,7 @@
 
 #include "png_images.h"
 #include "lcd.h"
-#include "icons_bt.h"
+#include "gfx/icons_bt.h"
 #include <PNGdec.h>
 
 #define MAX_IMAGE_WIDTH 48 // Sets rendering line buffer lengths, adjust for your images
