@@ -7,6 +7,7 @@
 #include "debug.h"
 #include "display_header.h"
 #include "display_main_area.h"
+#include "inclinometer.h"
 #include "power_saving_task.h"
 #include "task_scheduler.h"
 
@@ -15,6 +16,7 @@ TFT_eSPI tft = TFT_eSPI();
 BatteryTask batteryTask;
 PowerSavingTask powerSavingTask;
 Bluetooth bluetooth;
+Inclinometer inclinometer(bluetooth);
 ezButton buttonUp(BUTTON_2);
 ezButton buttonDown(BUTTON_1);
 
@@ -44,7 +46,7 @@ void setup() {
     batteryTask.enable();
 
     bluetooth.initialize();
-
+    inclinometer.enable();
     powerSavingTask.wakeUp();
 }
 
@@ -54,7 +56,9 @@ void loop() {
     buttonDown.loop();
     bluetooth.loop();
 
-    if (buttonUp.isPressed() || buttonDown.isPressed()) {
+    auto wakeup = buttonUp.isPressed() || buttonDown.isPressed() || inclinometer.isWarning();
+
+    if (wakeup) {
         powerSavingTask.wakeUp();
     }
 }

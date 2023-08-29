@@ -30,6 +30,10 @@ public:
     void onConnect(BLEClient *pClient) override;
     void onDisconnect(BLEClient *pClient) override;
 
+    bool isConnected();
+    static double getPitch();
+    static double getRoll();
+
 private:
     BLEAdvertisedDevice *serverDevice = nullptr;
     BLEClient *client = nullptr;

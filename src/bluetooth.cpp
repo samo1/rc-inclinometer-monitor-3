@@ -21,8 +21,12 @@ static void pitchRollCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteChara
     if (pos != std::string::npos) {
         std::string pitchString = stringData.substr(0, pos);
         std::string rollString = stringData.substr(pos + 1);
-        pitch = std::stod(pitchString);
-        roll = std::stod(rollString);
+        try {
+            pitch = std::stod(pitchString);
+            roll = std::stod(rollString);
+        }
+        catch (const std::invalid_argument &e) {}
+        catch (const std::out_of_range &e) {}
     }
 }
 
@@ -128,6 +132,18 @@ bool Bluetooth::connect() {
 
 void Bluetooth::disconnect() {
     client->disconnect();
+}
+
+double Bluetooth::getPitch() {
+    return pitch;
+}
+
+double Bluetooth::getRoll() {
+    return roll;
+}
+
+bool Bluetooth::isConnected() {
+    return connected;
 }
 
 bool BluetoothReconnectTask::Callback() {

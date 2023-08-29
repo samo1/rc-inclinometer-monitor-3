@@ -3,7 +3,7 @@
 #include "png_images.h"
 #include "lcd.h"
 
-#define HEADER_FONT 4
+#define HEADER_FONT FONT4
 #define HEADER_BG_COLOR TFT_DARKGREY
 
 #define BT_ICON_X 240
