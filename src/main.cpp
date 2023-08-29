@@ -13,10 +13,11 @@
 
 TFT_eSPI tft = TFT_eSPI();
 
+DisplayMainArea displayMainArea;
 BatteryTask batteryTask;
 PowerSavingTask powerSavingTask;
 Bluetooth bluetooth;
-Inclinometer inclinometer(bluetooth);
+Inclinometer inclinometer(bluetooth, displayMainArea);
 ezButton buttonUp(BUTTON_2);
 ezButton buttonDown(BUTTON_1);
 
@@ -33,7 +34,7 @@ void setup() {
     tft.init();
     tft.setRotation(1);
 
-    DisplayMainArea::init();
+    displayMainArea.init();
 
     DisplayHeader::init();
     DisplayHeader::printText("Starting...");

@@ -6,9 +6,9 @@ bool Inclinometer::Callback() {
     if (showOnScreen) {
         double pitch = Bluetooth::getPitch();
         double roll = Bluetooth::getRoll();
-        warning = (pitch >= 45.0 || pitch <= -45.0 || roll >= 30 || roll <= -30);
+        warning = (pitch >= 45.0 || pitch <= -45.0 || roll >= 25 || roll <= -25);
         if (pitch != previousPitch || roll != previousRoll) {
-            DisplayMainArea::drawInclinometer(pitch, roll);
+            displayMainArea.drawInclinometer(pitch, roll);
             previousPitch = pitch;
             previousRoll = roll;
         }
