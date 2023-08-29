@@ -22,4 +22,7 @@ void DisplayMainArea::drawInclinometer(double pitch, double roll) {
     tft.setFreeFont(&FreeMono18pt7b);
     tft.drawString(ss1.str().c_str(), 8, 44, GFXFF);
     tft.drawString(ss2.str().c_str(), 248, 44, GFXFF);
+
+    tft.fillCircle(160 + 68, 115, 50, TFT_BLUE);
+    tft.fillCircle(160 - 68, 115, 50, TFT_BLUE);
 }
