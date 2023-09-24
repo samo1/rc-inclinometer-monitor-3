@@ -1,6 +1,5 @@
 #include "inclinometer.h"
 #include "display_header.h"
-#include "display_main_area.h"
 
 bool Inclinometer::Callback() {
     if (showOnScreen) {

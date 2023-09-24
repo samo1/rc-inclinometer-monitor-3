@@ -9,8 +9,10 @@ public:
         setSchedulingOption(TASK_INTERVAL);
     }
     bool Callback() override;
-    static void measureAndDrawBatteryIndicator();
+    void measureAndDrawBatteryIndicator();
+    double getBatteryPercentage() const;
 private:
+    double batteryPercentage = 0.0;
     static double measureBatteryPercentage();
 };
 

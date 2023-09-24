@@ -41,9 +41,9 @@ void setup() {
     DisplayHeader::drawBluetoothImage();
     DisplayHeader::drawBatteryOutline();
 
-    BatteryTask::measureAndDrawBatteryIndicator();
+    batteryTask.measureAndDrawBatteryIndicator();
     delay(500);
-    BatteryTask::measureAndDrawBatteryIndicator();
+    batteryTask.measureAndDrawBatteryIndicator();
     batteryTask.enable();
 
     bluetooth.initialize();
@@ -57,7 +57,8 @@ void loop() {
     buttonDown.loop();
     bluetooth.loop();
 
-    auto wakeup = buttonUp.isPressed() || buttonDown.isPressed() || inclinometer.isWarning();
+    auto wakeup = buttonUp.isPressed() || buttonDown.isPressed() || inclinometer.isWarning()
+                  || batteryTask.getBatteryPercentage() == 0.0;
 
     if (wakeup) {
         powerSavingTask.wakeUp();
