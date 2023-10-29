@@ -1,6 +1,5 @@
 #include "bluetooth.h"
 #include "debug.h"
-#include "display_header.h"
 
 #define BLUETOOTH_RECONNECT_DELAY_MS 5000
 
@@ -8,6 +7,10 @@ bool scanInProgress = false;
 
 double pitch = 0.0;
 double roll = 0.0;
+
+bool winchEnabled = false;
+char winchMovement = 'S';
+bool frontDigEnabled = false;
 
 static void scanCompleteCallback(BLEScanResults scanResults) {
     DEBUG_PRINTLN("Scan complete");
@@ -17,6 +20,8 @@ static void scanCompleteCallback(BLEScanResults scanResults) {
 static void pitchRollCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic,
                                         uint8_t* pData, size_t length, bool isNotify) {
     std::string stringData(pData, pData + length);
+    DEBUG_PRINT("Received pitch roll callback ");
+    DEBUG_PRINTLN(stringData.c_str());
     auto pos = stringData.find(':');
     if (pos != std::string::npos) {
         std::string pitchString = stringData.substr(0, pos);
@@ -27,6 +32,18 @@ static void pitchRollCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteChara
         }
         catch (const std::invalid_argument &e) {}
         catch (const std::out_of_range &e) {}
+    }
+}
+
+static void winchInfoCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic,
+                                        uint8_t* pData, size_t length, bool isNotify) {
+    std::string stringData(pData, pData + length);
+    DEBUG_PRINT("Received winch info callback ");
+    DEBUG_PRINTLN(stringData.c_str());
+    if (stringData.length() >= 3) {
+        winchEnabled = (stringData[0] == 'E');
+        winchMovement = stringData[1];
+        frontDigEnabled = (stringData[2] == 'E');
     }
 }
 
@@ -68,20 +85,17 @@ void Bluetooth::onResult(BLEAdvertisedDevice advertisedDevice) {
 void Bluetooth::onConnect(BLEClient *pClient) {
     connectInProgress = false;
     connected = true;
-    DisplayHeader::printText("Connected");
-    DisplayHeader::drawBluetoothConnectedImage();
+    stateManager.setState(State::connected);
 }
 
 void Bluetooth::onDisconnect(BLEClient *pClient) {
     connectInProgress = false;
     connected = false;
-    DisplayHeader::printText("Disconnected");
-    DisplayHeader::drawBluetoothDisabledImage();
+    stateManager.setState(State::disconnected);
 }
 
 void Bluetooth::startScan() {
-    DisplayHeader::printText("Connecting...");
-    DisplayHeader::drawBluetoothSearchingImage();
+    stateManager.setState(State::connecting);
 
     scanInProgress = true;
 
@@ -127,6 +141,18 @@ bool Bluetooth::connect() {
         pitchRollChar->registerForNotify(pitchRollCharNotifyCallback);
     }
 
+    winchInfoChar = remoteService->getCharacteristic(winchInfoCharUUID);
+    if (winchInfoChar == nullptr) {
+        DEBUG_PRINTLN("Winch-Info characteristic not found");
+        return false;
+    }
+
+    if (winchInfoChar->canNotify()) {
+        winchInfoChar->registerForNotify(winchInfoCharNotifyCallback);
+    }
+
+    winchControlChar = remoteService->getCharacteristic(winchControlCharUUID);
+
     return true;
 }
 
@@ -142,8 +168,22 @@ double Bluetooth::getRoll() {
     return roll;
 }
 
-bool Bluetooth::isConnected() {
-    return connected;
+bool Bluetooth::getWinchEnabled() {
+    return winchEnabled;
+}
+
+char Bluetooth::getWinchMovement() {
+    return winchMovement;
+}
+
+bool Bluetooth::getFrontDigEnabled() {
+    return frontDigEnabled;
+}
+
+void Bluetooth::sendCommand(std::string& cmd) {
+    if (winchControlChar->canWrite()) {
+        winchControlChar->writeValue(cmd, true);
+    }
 }
 
 bool BluetoothReconnectTask::Callback() {

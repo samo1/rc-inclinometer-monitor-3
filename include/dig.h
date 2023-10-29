@@ -1,28 +1,26 @@
-#ifndef INCLINOMETER_H
-#define INCLINOMETER_H
+#pragma once
 
 #include "bluetooth.h"
 #include "display_main_area.h"
 #include "task_scheduler.h"
 
-class Inclinometer : public Task {
+class Dig : public Task {
 public:
-    Inclinometer(StateManager& stateManager, DisplayMainArea& displayMainArea)
+    Dig(StateManager& stateManager, DisplayMainArea& displayMainArea, Bluetooth& bluetooth)
             : Task(200, TASK_FOREVER, &scheduler, false),
               stateManager(stateManager),
-              displayMainArea(displayMainArea) {
+              displayMainArea(displayMainArea),
+              bluetooth(bluetooth) {
         setSchedulingOption(TASK_INTERVAL);
     }
 
     bool Callback() override;
-    bool isWarning();
+    void handleButtonClick();
 
 private:
     StateManager& stateManager;
     DisplayMainArea& displayMainArea;
-    double previousPitch = 0.0;
-    double previousRoll = 0.0;
-    bool warning = false;
-};
+    Bluetooth& bluetooth;
 
-#endif //INCLINOMETER_H
+    bool previousEnabled = false;
+};

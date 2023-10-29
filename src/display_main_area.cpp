@@ -4,7 +4,7 @@
 #include <sstream>
 
 void DisplayMainArea::init() {
-    tft.fillRect(0, 36, 320, 170 - 36, TFT_BLACK);
+    clear();
 
     jeepPitchSprite.createSprite(100, 100);
     jeepPitchSprite.setSwapBytes(true);
@@ -15,6 +15,10 @@ void DisplayMainArea::init() {
     jeepRollSprite.setSwapBytes(true);
     jeepRollSprite.pushImage(0, 0, 100, 100, reinterpret_cast<const uint16_t *>(inclinometer_jeep_roll_rgb565));
     jeepRollSprite.setPivot(50, 50);
+}
+
+void DisplayMainArea::clear() {
+    tft.fillRect(0, 36, 320, 170 - 36, TFT_BLACK);
 }
 
 void DisplayMainArea::drawInclinometer(double pitch, double roll) {
@@ -46,4 +50,54 @@ void DisplayMainArea::drawNumber(uint16_t value) {
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
     tft.drawString(ss.str().c_str(), 0, 154, GFXFF);
+}
+
+void DisplayMainArea::drawWinch(bool enabled, char movement) {
+    if (enabled) {
+        tft.setTextColor(TFT_GREENYELLOW, TFT_BLACK, true);
+        tft.drawString("Winch ON   ", 90, 60, FONT4);
+    } else {
+        tft.setTextColor(TFT_RED, TFT_BLACK, true);
+        tft.drawString("Winch OFF", 90, 60, FONT4);
+    }
+    if (movement == 'S') {
+        tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK, true);
+        tft.drawString("stopped          ", 90, 94, FONT4);
+    } else if (movement == 'I') {
+        tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK, true);
+        tft.drawString("winching in   ", 90, 94, FONT4);
+    } else if (movement == 'O') {
+        tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK, true);
+        tft.drawString("winching out", 90, 94, FONT4);
+    }
+}
+
+void DisplayMainArea::drawWinchButtonHelp(bool enabled) {
+    if (enabled) {
+        tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+        tft.drawString("Turn off", 260, 140, FONT2);
+    } else {
+        tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+        tft.drawString("Turn on  ", 260, 140, FONT2);
+    }
+}
+
+void DisplayMainArea::drawDig(bool enabled) {
+    if (enabled) {
+        tft.setTextColor(TFT_ORANGE, TFT_BLACK, true);
+        tft.drawString("      Front dig      ", 80, 60, FONT4);
+    } else {
+        tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK, true);
+        tft.drawString("All wheel drive", 80, 60, FONT4);
+    }
+}
+
+void DisplayMainArea::drawDigButtonHelp(bool enabled) {
+    if (enabled) {
+        tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+        tft.drawString("Turn off", 260, 140, FONT2);
+    } else {
+        tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+        tft.drawString("Turn on  ", 260, 140, FONT2);
+    }
 }

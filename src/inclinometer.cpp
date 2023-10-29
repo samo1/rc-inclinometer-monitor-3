@@ -2,24 +2,17 @@
 #include "display_header.h"
 
 bool Inclinometer::Callback() {
-    if (showOnScreen) {
+    if (stateManager.getState() == State::inclinometer) {
         double pitch = Bluetooth::getPitch();
         double roll = Bluetooth::getRoll();
         warning = (pitch >= 45.0 || pitch <= -45.0 || roll >= 25 || roll <= -25);
-        if (pitch != previousPitch || roll != previousRoll) {
+        if (pitch != this->previousPitch || roll != this->previousRoll || stateManager.stateChangedNow()) {
             displayMainArea.drawInclinometer(pitch, roll);
-            previousPitch = pitch;
-            previousRoll = roll;
-        }
-    }
-
-    if (bluetooth.isConnected()) {
-        if (!showOnScreen) {
-            showOnScreen = true;
-            DisplayHeader::printText("Inclinometer");
+            this->previousPitch = pitch;
+            this->previousRoll = roll;
         }
     } else {
-        showOnScreen = false;
+        warning = false;
     }
     return true;
 }
