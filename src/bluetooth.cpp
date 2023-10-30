@@ -17,11 +17,7 @@ static void scanCompleteCallback(BLEScanResults scanResults) {
     scanInProgress = false;
 }
 
-static void pitchRollCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic,
-                                        uint8_t* pData, size_t length, bool isNotify) {
-    std::string stringData(pData, pData + length);
-    DEBUG_PRINT("Received pitch roll callback ");
-    DEBUG_PRINTLN(stringData.c_str());
+static void pitchRollUpdate(std::string& stringData) {
     auto pos = stringData.find(':');
     if (pos != std::string::npos) {
         std::string pitchString = stringData.substr(0, pos);
@@ -35,16 +31,28 @@ static void pitchRollCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteChara
     }
 }
 
-static void winchInfoCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic,
+static void pitchRollCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic,
                                         uint8_t* pData, size_t length, bool isNotify) {
     std::string stringData(pData, pData + length);
-    DEBUG_PRINT("Received winch info callback ");
+    DEBUG_PRINT("Received pitch roll callback ");
     DEBUG_PRINTLN(stringData.c_str());
+    pitchRollUpdate(stringData);
+}
+
+static void winchInfoUpdate(std::string& stringData) {
     if (stringData.length() >= 3) {
         winchEnabled = (stringData[0] == 'E');
         winchMovement = stringData[1];
         frontDigEnabled = (stringData[2] == 'E');
     }
+}
+
+static void winchInfoCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic,
+                                        uint8_t* pData, size_t length, bool isNotify) {
+    std::string stringData(pData, pData + length);
+    DEBUG_PRINT("Received winch info callback ");
+    DEBUG_PRINTLN(stringData.c_str());
+    winchInfoUpdate(stringData);
 }
 
 void Bluetooth::initialize() {
@@ -136,9 +144,12 @@ bool Bluetooth::connect() {
         DEBUG_PRINTLN("Pitch-Roll characteristic not found");
         return false;
     }
-
     if (pitchRollChar->canNotify()) {
         pitchRollChar->registerForNotify(pitchRollCharNotifyCallback);
+    }
+    if (pitchRollChar->canRead()) {
+        std::string pitchRollValue = pitchRollChar->readValue();
+        pitchRollUpdate(pitchRollValue);
     }
 
     winchInfoChar = remoteService->getCharacteristic(winchInfoCharUUID);
@@ -146,9 +157,12 @@ bool Bluetooth::connect() {
         DEBUG_PRINTLN("Winch-Info characteristic not found");
         return false;
     }
-
     if (winchInfoChar->canNotify()) {
         winchInfoChar->registerForNotify(winchInfoCharNotifyCallback);
+    }
+    if (winchInfoChar->canRead()) {
+        std::string winchInfoValue = winchInfoChar->readValue();
+        winchInfoUpdate(winchInfoValue);
     }
 
     winchControlChar = remoteService->getCharacteristic(winchControlCharUUID);
