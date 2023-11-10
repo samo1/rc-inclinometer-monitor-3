@@ -12,9 +12,11 @@ public:
     }
     bool Callback() override;
     void wakeUp();
+    void sleep();
     bool isLcdOff();
 private:
-    bool lcdOff = false;
+    bool turnLcdOffOnAutoSleep = false;
+    bool lcdIsOff = false;
 
     void turnLcdOn();
     void turnLcdOff();

@@ -40,6 +40,9 @@ static void handleButtonDownClick() {
     bool lcdOff = powerSavingTask.isLcdOff();
     powerSavingTask.wakeUp();
     if (!lcdOff) {
+        if (stateManager.getState() == State::inclinometer) {
+            powerSavingTask.sleep();
+        }
         winch.handleButtonClick();
         dig.handleButtonClick();
     }

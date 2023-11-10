@@ -6,7 +6,9 @@
 #define LEDC_CHANNEL_0 0
 
 bool PowerSavingTask::Callback() {
-    turnLcdOff();
+    if (turnLcdOffOnAutoSleep) {
+        turnLcdOff();
+    }
     return true;
 }
 
@@ -15,7 +17,7 @@ void PowerSavingTask::turnLcdOn() {
     ledcAttachPin(LCD_BL, LEDC_CHANNEL_0);
     ledcWrite(LEDC_CHANNEL_0, MAX_BRIGHNESS);
     // digitalWrite(LCD_POWER_ON, HIGH);
-    this->lcdOff = false;
+    this->lcdIsOff = false;
 }
 
 void PowerSavingTask::turnLcdOff() {
@@ -23,7 +25,7 @@ void PowerSavingTask::turnLcdOff() {
     ledcAttachPin(LCD_BL, LEDC_CHANNEL_0);
     ledcWrite(LEDC_CHANNEL_0, MIN_BRIGHNESS);
     // digitalWrite(LCD_POWER_ON, LOW);
-    this->lcdOff = true;
+    this->lcdIsOff = true;
 }
 
 bool PowerSavingTask::turnLcdOffAfterDelay() {
@@ -31,12 +33,18 @@ bool PowerSavingTask::turnLcdOffAfterDelay() {
 }
 
 void PowerSavingTask::wakeUp() {
-    if (lcdOff) {
+    if (lcdIsOff) {
         turnLcdOn();
     }
     turnLcdOffAfterDelay();
 }
 
+void PowerSavingTask::sleep() {
+    if (!lcdIsOff) {
+        turnLcdOff();
+    }
+}
+
 bool PowerSavingTask::isLcdOff() {
-    return lcdOff;
+    return lcdIsOff;
 }
