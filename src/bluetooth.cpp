@@ -12,6 +12,9 @@ bool winchEnabled = false;
 char winchMovement = 'S';
 bool frontDigEnabled = false;
 
+double currentSpeedValue = 0.0;
+unsigned long tickNr = 0;
+
 static void scanCompleteCallback(BLEScanResults scanResults) {
     DEBUG_PRINTLN("Scan complete");
     scanInProgress = false;
@@ -53,6 +56,28 @@ static void winchInfoCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteChara
     DEBUG_PRINT("Received winch info callback ");
     DEBUG_PRINTLN(stringData.c_str());
     winchInfoUpdate(stringData);
+}
+
+static void speedUpdate(std::string& stringData) {
+    auto pos = stringData.find(';');
+    if (pos != std::string::npos) {
+        std::string speedString = stringData.substr(0, pos);
+        std::string tickNrString = stringData.substr(pos + 1);
+        try {
+            currentSpeedValue = std::stod(speedString);
+            tickNr = std::stoul(tickNrString);
+        }
+        catch (const std::invalid_argument &e) {}
+        catch (const std::out_of_range &e) {}
+    }
+}
+
+static void speedCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteCharacteristic,
+                                    uint8_t* pData, size_t length, bool isNotify) {
+    std::string stringData(pData, pData + length);
+    DEBUG_PRINT("Received speed callback ");
+    DEBUG_PRINTLN(stringData.c_str());
+    speedUpdate(stringData);
 }
 
 void Bluetooth::initialize() {
@@ -167,6 +192,19 @@ bool Bluetooth::connect() {
 
     winchControlChar = remoteService->getCharacteristic(winchControlCharUUID);
 
+    speedChar = remoteService->getCharacteristic(speedCharUUID);
+    if (speedChar == nullptr) {
+        DEBUG_PRINTLN("Speed characteristic not found");
+        return false;
+    }
+    if (speedChar->canNotify()) {
+        speedChar->registerForNotify(speedCharNotifyCallback);
+    }
+    if (speedChar->canRead()) {
+        std::string speedValue = speedChar->readValue();
+        speedUpdate(speedValue);
+    }
+
     return true;
 }
 
@@ -192,6 +230,14 @@ char Bluetooth::getWinchMovement() {
 
 bool Bluetooth::getFrontDigEnabled() {
     return frontDigEnabled;
+}
+
+double Bluetooth::getSpeed() {
+    return currentSpeedValue;
+}
+
+unsigned long Bluetooth::getTickNr() {
+    return tickNr;
 }
 
 void Bluetooth::sendCommand(std::string& cmd) {

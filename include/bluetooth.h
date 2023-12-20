@@ -9,6 +9,7 @@ static BLEUUID infoServiceUUID("be75903a-14b3-11ec-a7df-e069953c4ba2");
 static BLEUUID pitchRollCharUUID("d6c77054-14b3-11ec-b16c-e069953c4ba2");
 static BLEUUID winchInfoCharUUID("8a3253c2-758b-11ee-99b9-e069953c4ba2");
 static BLEUUID winchControlCharUUID("4eae0d40-699f-11ec-b55b-e069953c4ba2");
+static BLEUUID speedCharUUID("c7de114e-9aab-11ee-9c1f-e069953c4ba2");
 
 class Bluetooth;
 
@@ -39,6 +40,8 @@ public:
     static bool getWinchEnabled();
     static char getWinchMovement();
     static bool getFrontDigEnabled();
+    static double getSpeed();
+    static unsigned long getTickNr();
 
 private:
     StateManager& stateManager;
@@ -51,6 +54,7 @@ private:
     BLERemoteCharacteristic *pitchRollChar = nullptr;
     BLERemoteCharacteristic *winchInfoChar = nullptr;
     BLERemoteCharacteristic *winchControlChar = nullptr;
+    BLERemoteCharacteristic *speedChar = nullptr;
 
     BluetoothReconnectTask bluetoothReconnectTask;
 

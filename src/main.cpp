@@ -10,6 +10,7 @@
 #include "display_main_area.h"
 #include "inclinometer.h"
 #include "power_saving_task.h"
+#include "speed.h"
 #include "state.h"
 #include "task_scheduler.h"
 #include "winch.h"
@@ -24,6 +25,7 @@ Bluetooth bluetooth(stateManager);
 Inclinometer inclinometer(stateManager, displayMainArea);
 Winch winch(stateManager, displayMainArea, bluetooth);
 Dig dig(stateManager, displayMainArea, bluetooth);
+Speed speed(stateManager, displayMainArea);
 OneButton buttonUp(BUTTON_2);
 OneButton buttonDown(BUTTON_1);
 
@@ -40,7 +42,7 @@ static void handleButtonDownClick() {
     bool lcdOff = powerSavingTask.isLcdOff();
     powerSavingTask.wakeUp();
     if (!lcdOff) {
-        if (stateManager.getState() == State::inclinometer) {
+        if (stateManager.getState() == State::speed || stateManager.getState() == State::inclinometer) {
             powerSavingTask.sleep();
         }
         winch.handleButtonClick();
@@ -74,6 +76,7 @@ void setup() {
     inclinometer.enable();
     winch.enable();
     dig.enable();
+    speed.enable();
     buttonUp.attachClick(handleButtonUpClick);
     buttonDown.attachClick(handleButtonDownClick);
     powerSavingTask.wakeUp();

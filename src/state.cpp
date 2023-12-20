@@ -31,13 +31,17 @@ bool StateManager::stateChangedNow() {
 void StateManager::goToNextState() {
     switch (currentState) {
         case State::initial:
-            currentState = State::inclinometer;
+            currentState = State::speed;
             stateChanged = true;
             break;
         case State::connecting:
         case State::connected:
         case State::disconnected:
             // do nothing
+            break;
+        case State::speed:
+            currentState = State::inclinometer;
+            stateChanged = true;
             break;
         case State::inclinometer:
             currentState = State::winch;
@@ -48,7 +52,7 @@ void StateManager::goToNextState() {
             stateChanged = true;
             break;
         case State::dig:
-            currentState = State::inclinometer;
+            currentState = State::speed;
             stateChanged = true;
             break;
     }
@@ -71,6 +75,9 @@ void StateManager::updateDisplayHeader() {
         case State::disconnected:
             DisplayHeader::printText("Disconnected");
             DisplayHeader::drawBluetoothDisabledImage();
+            break;
+        case State::speed:
+            DisplayHeader::printText("Speed 1:10");
             break;
         case State::inclinometer:
             DisplayHeader::printText("Inclinometer");

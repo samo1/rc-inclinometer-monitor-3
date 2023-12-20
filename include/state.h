@@ -5,6 +5,7 @@ enum class State {
     connecting,
     connected,
     disconnected,
+    speed,
     inclinometer,
     winch,
     dig

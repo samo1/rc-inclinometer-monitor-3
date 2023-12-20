@@ -44,12 +44,12 @@ void DisplayMainArea::drawInclinometer(double pitch, double roll) {
     jeepRollSprite.pushRotated(rollAngle, TFT_BLACK);
 }
 
-void DisplayMainArea::drawNumber(uint16_t value) {
+void DisplayMainArea::drawNumber(uint16_t value, int32_t x = 0, int32_t y = 154) {
     std::ostringstream ss;
     ss << std::setfill(' ') << std::left << std::setw(5) << value << ' ';
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), 0, 154, GFXFF);
+    tft.drawString(ss.str().c_str(), x, y, GFXFF);
 }
 
 void DisplayMainArea::drawWinch(bool enabled, char movement) {
@@ -100,4 +100,23 @@ void DisplayMainArea::drawDigButtonHelp(bool enabled) {
         tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
         tft.drawString("Turn on  ", 260, 140, FONT2);
     }
+}
+
+void DisplayMainArea::drawSpeedInitial() {
+    std::ostringstream ss;
+    tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+    tft.setFreeFont(&FreeMono24pt7b);
+    tft.drawString("      km/h", 0, 60, GFXFF);
+}
+
+void DisplayMainArea::drawSpeed(double speed, unsigned long tickNr) {
+    int speedAbsInt = abs(static_cast<int>(speed * 100.0));
+
+    std::ostringstream ss;
+    ss << std::setfill(' ') << std::right << std::setw(5) << speedAbsInt << ' ';
+    tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+    tft.setFreeFont(&FreeMono24pt7b);
+    tft.drawString(ss.str().c_str(), 0, 60, GFXFF);
+
+    drawNumber(tickNr);
 }
