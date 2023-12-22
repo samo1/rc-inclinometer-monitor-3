@@ -19,6 +19,7 @@ private:
     StateManager& stateManager;
     DisplayMainArea& displayMainArea;
     double previousSpeed = 0.0;
+    double previousDistance = 0.0;
     unsigned long previousTickNr = 0;
     boolean displayInitialized = false;
 };

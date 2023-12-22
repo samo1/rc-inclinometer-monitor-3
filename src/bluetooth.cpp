@@ -13,6 +13,7 @@ char winchMovement = 'S';
 bool frontDigEnabled = false;
 
 double currentSpeedValue = 0.0;
+double currectDistanceValue = 0.0;
 unsigned long tickNr = 0;
 
 static void scanCompleteCallback(BLEScanResults scanResults) {
@@ -59,12 +60,15 @@ static void winchInfoCharNotifyCallback(BLERemoteCharacteristic* pBLERemoteChara
 }
 
 static void speedUpdate(std::string& stringData) {
-    auto pos = stringData.find(';');
-    if (pos != std::string::npos) {
-        std::string speedString = stringData.substr(0, pos);
-        std::string tickNrString = stringData.substr(pos + 1);
+    auto pos1 = stringData.find(';');
+    auto pos2 = stringData.find(';', pos1 + 1);
+    if (pos1 != std::string::npos && pos2 != std::string::npos) {
+        std::string speedString = stringData.substr(0, pos1);
+        std::string tickNrString = stringData.substr(pos1 + 1, pos2);
+        std::string distanceString = stringData.substr(pos2 + 1);
         try {
             currentSpeedValue = std::stod(speedString);
+            currectDistanceValue = std::stod(distanceString);
             tickNr = std::stoul(tickNrString);
         }
         catch (const std::invalid_argument &e) {}
@@ -234,6 +238,10 @@ bool Bluetooth::getFrontDigEnabled() {
 
 double Bluetooth::getSpeed() {
     return currentSpeedValue;
+}
+
+double Bluetooth::getDistance() {
+    return currectDistanceValue;
 }
 
 unsigned long Bluetooth::getTickNr() {

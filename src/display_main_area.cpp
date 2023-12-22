@@ -44,10 +44,10 @@ void DisplayMainArea::drawInclinometer(double pitch, double roll) {
     jeepRollSprite.pushRotated(rollAngle, TFT_BLACK);
 }
 
-void DisplayMainArea::drawNumber(uint16_t value, int32_t x = 0, int32_t y = 154) {
+void DisplayMainArea::drawNumber(uint16_t value, int32_t x = 0, int32_t y = 154, uint16_t textColor = TFT_DARKGREY) {
     std::ostringstream ss;
     ss << std::setfill(' ') << std::left << std::setw(5) << value << ' ';
-    tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+    tft.setTextColor(textColor, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
     tft.drawString(ss.str().c_str(), x, y, GFXFF);
 }
@@ -107,16 +107,25 @@ void DisplayMainArea::drawSpeedInitial() {
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono24pt7b);
     tft.drawString("      km/h", 0, 60, GFXFF);
+    tft.setFreeFont(&FreeMono9pt7b);
+    tft.drawString("      km", 100, 120, GFXFF);
 }
 
-void DisplayMainArea::drawSpeed(double speed, unsigned long tickNr) {
-    int speedAbsInt = abs(static_cast<int>(speed * 100.0));
+void DisplayMainArea::drawSpeed(double speedKmh, double distanceMeters, unsigned long tickNr) {
+    int scaleSpeed = abs(static_cast<int>(speedKmh * 10.0));
+    int scaleDistance = abs(static_cast<int>(distanceMeters / 100.0));
 
-    std::ostringstream ss;
-    ss << std::setfill(' ') << std::right << std::setw(5) << speedAbsInt << ' ';
+    std::ostringstream ss1;
+    ss1 << std::setfill(' ') << std::right << std::setw(5) << scaleSpeed << ' ';
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono24pt7b);
-    tft.drawString(ss.str().c_str(), 0, 60, GFXFF);
+    tft.drawString(ss1.str().c_str(), 0, 60, GFXFF);
+
+    std::ostringstream ss2;
+    ss2 << std::setfill(' ') << std::right << std::setw(5) << scaleDistance << ' ';
+    tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+    tft.setFreeFont(&FreeMono9pt7b);
+    tft.drawString(ss2.str().c_str(), 100, 120, GFXFF);
 
     drawNumber(tickNr);
 }
