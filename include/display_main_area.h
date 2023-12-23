@@ -15,6 +15,7 @@ public:
     static void drawDigButtonHelp(bool enabled);
     static void drawSpeedInitial();
     static void drawSpeed(double speedKmh, double distanceMeters, unsigned long tickNr);
+    static void drawInfoScreen(uint16_t batVoltRaw);
 private:
     TFT_eSprite jeepPitchSprite = TFT_eSprite(&tft);
     TFT_eSprite jeepRollSprite = TFT_eSprite(&tft);

@@ -11,9 +11,11 @@ public:
     bool Callback() override;
     void measureAndDrawBatteryIndicator();
     double getBatteryPercentage() const;
+    uint16_t getRawValue() const;
 private:
+    uint16_t rawValue = 0;
     double batteryPercentage = 0.0;
-    static double measureBatteryPercentage();
+    static double calculateBatteryPercentage(uint16_t rawValue);
 };
 
 #endif //BATTERY_TASK_H

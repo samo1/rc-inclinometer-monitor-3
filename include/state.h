@@ -8,7 +8,8 @@ enum class State {
     speed,
     inclinometer,
     winch,
-    dig
+    dig,
+    info
 };
 
 class StateManager {

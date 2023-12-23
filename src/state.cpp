@@ -52,6 +52,10 @@ void StateManager::goToNextState() {
             stateChanged = true;
             break;
         case State::dig:
+            currentState = State::info;
+            stateChanged = true;
+            break;
+        case State::info:
             currentState = State::speed;
             stateChanged = true;
             break;
@@ -87,6 +91,9 @@ void StateManager::updateDisplayHeader() {
             break;
         case State::dig:
             DisplayHeader::printText("Dig");
+            break;
+        case State::info:
+            DisplayHeader::printText("Info");
             break;
     }
 }

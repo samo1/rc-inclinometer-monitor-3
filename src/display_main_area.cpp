@@ -129,3 +129,7 @@ void DisplayMainArea::drawSpeed(double speedKmh, double distanceMeters, unsigned
 
     drawNumber(tickNr);
 }
+
+void DisplayMainArea::drawInfoScreen(uint16_t batVoltRaw) {
+    drawNumber(batVoltRaw, 20, 60, TFT_WHITE);
+}

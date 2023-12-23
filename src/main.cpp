@@ -9,6 +9,7 @@
 #include "display_header.h"
 #include "display_main_area.h"
 #include "inclinometer.h"
+#include "info_screen.h"
 #include "power_saving_task.h"
 #include "speed.h"
 #include "state.h"
@@ -26,6 +27,7 @@ Inclinometer inclinometer(stateManager, displayMainArea);
 Winch winch(stateManager, displayMainArea, bluetooth);
 Dig dig(stateManager, displayMainArea, bluetooth);
 Speed speed(stateManager, displayMainArea);
+InfoScreen infoScreen(stateManager, displayMainArea, batteryTask);
 OneButton buttonUp(BUTTON_2);
 OneButton buttonDown(BUTTON_1);
 
@@ -42,7 +44,9 @@ static void handleButtonDownClick() {
     bool lcdOff = powerSavingTask.isLcdOff();
     powerSavingTask.wakeUp();
     if (!lcdOff) {
-        if (stateManager.getState() == State::speed || stateManager.getState() == State::inclinometer) {
+        if (stateManager.getState() == State::speed
+            || stateManager.getState() == State::inclinometer
+            || stateManager.getState() == State::info) {
             powerSavingTask.sleep();
         }
         winch.handleButtonClick();
@@ -77,6 +81,7 @@ void setup() {
     winch.enable();
     dig.enable();
     speed.enable();
+    infoScreen.enable();
     buttonUp.attachClick(handleButtonUpClick);
     buttonDown.attachClick(handleButtonDownClick);
     powerSavingTask.wakeUp();
