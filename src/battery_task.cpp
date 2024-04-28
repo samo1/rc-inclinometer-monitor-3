@@ -37,6 +37,21 @@ double BatteryTask::calculateBatteryPercentage(uint16_t rawValue) {
     //         4.95 = 2611 - 2652  15:03
     //         4.95 = 2488 - 2522  15:18 beeps
     //         4.92 = 2606 - 2638  15:27 beeps
+    // 4xAA black Eneloop
+    //         3200 20:45
+    //         2860 22:05
+    //         2723 01:38
+    //         2695 01:50
+    // 4xAA Xtar Li-om 4158 mAh
+    //         full = 3295
+    //         40 min = 2642
+    //         60 min = the same
+    //         110 min = 2586
+    //         240 min = 2578
+    //         322 min = 2639
+    //         423 min = 2355
+    //         426 min = 2110 blinks red
+    //         432 min = 1871 beeps
 
     double percentage;
     //if (rawValue < 2500) {
@@ -47,7 +62,18 @@ double BatteryTask::calculateBatteryPercentage(uint16_t rawValue) {
     //    percentage = (rawValue - 2600.0) / (3000.0 - 2600.0);
     //}
     // 4xAA
-    percentage = (rawValue - 2600.0) / (3000.0 - 2600.0);
+    // percentage = (rawValue - 2600.0) / (3000.0 - 2600.0);
+
+    // 4xAA Xtar Li-om 4158 mAh
+    if (rawValue > 2800) {
+        percentage = 1;
+    } else if (rawValue < 2400) {
+        percentage = 0;
+    } else {
+        double maxTimeMillis = 25200000; // 7h
+        double remainingMllis = maxTimeMillis - millis();
+        percentage = remainingMllis / maxTimeMillis;
+    }
 
     //double batteryVoltage = (rawValue * 2 * 3.3) / 4096;
     //double percentage = (batteryVoltage - 3.7) / (4.2 - 3.7);
