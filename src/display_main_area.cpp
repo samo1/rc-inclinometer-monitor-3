@@ -130,6 +130,46 @@ void DisplayMainArea::drawSpeed(double speedKmh, double distanceMeters, unsigned
     drawNumber(tickNr);
 }
 
-void DisplayMainArea::drawInfoScreen(uint16_t batVoltRaw) {
-    drawNumber(batVoltRaw, 20, 60, TFT_WHITE);
+void DisplayMainArea::drawInfoScreenInitial() {
+    tft.setTextColor(TFT_CYAN, TFT_BLACK, true);
+    tft.setFreeFont(&FreeMono9pt7b);
+    tft.drawString("Time: ", 20, 60, GFXFF);
+    tft.drawString("Bat. sensor: ", 20, 80, GFXFF);
+    tft.drawString("Speed sensor: ", 20, 100, GFXFF);
+}
+
+void DisplayMainArea::drawInfoScreenBatSensor(uint16_t batVoltRaw) {
+    std::ostringstream ss;
+    ss << batVoltRaw;
+    tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+    tft.setFreeFont(&FreeMono9pt7b);
+    tft.drawString(ss.str().c_str(), 163, 80, GFXFF);
+}
+
+void DisplayMainArea::drawInfoScreenTime(unsigned long seconds) {
+    // unsigned long milliseconds = millis();
+    // auto seconds = milliseconds / 1000;
+    // milliseconds %= 1000;
+    auto minutes = seconds / 60;
+    seconds %= 60;
+    auto hours = minutes / 60;
+    minutes %= 60;
+
+    std::ostringstream ss;
+    ss << std::setfill('0') << std::setw(2) << hours << ':'
+       << std::setfill('0') << std::setw(2) << minutes << ':'
+       << std::setfill('0') << std::setw(2) << seconds;
+
+    tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+    tft.setFreeFont(&FreeMono9pt7b);
+    tft.drawString(ss.str().c_str(), 86, 60, GFXFF);
+}
+
+void DisplayMainArea::drawInfoScreenTickNr(unsigned long tickNr) {
+    std::ostringstream ss;
+    ss << std::setfill(' ') << std::left << std::setw(6) << tickNr;
+
+    tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+    tft.setFreeFont(&FreeMono9pt7b);
+    tft.drawString(ss.str().c_str(), 174, 100, GFXFF);
 }
