@@ -3,11 +3,10 @@
 bool InfoScreen::Callback() {
     if (stateManager.getState() == State::info) {
         uint16_t batVoltRaw = batteryTask.getRawValue();
-        unsigned long milliseconds = millis();
-        unsigned long seconds = milliseconds / 1000;
+        uint16_t batteryMinutes = batteryTask.getBatteryTimeMinutes();
         unsigned long tickNr = Bluetooth::getTickNr();
         bool stateChangedNow = stateManager.stateChangedNow();
-        if (batVoltRaw != previousBatVoltRaw || seconds != previousSeconds || tickNr != previousTickNr
+        if (batVoltRaw != previousBatVoltRaw || batteryMinutes != previousBatteryMinutes || tickNr != previousTickNr
             || stateChangedNow) {
             if (!displayInitialized || stateChangedNow) {
                 DisplayMainArea::drawInfoScreenInitial();
@@ -16,14 +15,14 @@ bool InfoScreen::Callback() {
             if (batVoltRaw != previousBatVoltRaw || stateChangedNow) {
                 DisplayMainArea::drawInfoScreenBatSensor(batVoltRaw);
             }
-            if (seconds != previousSeconds || stateChangedNow) {
-                DisplayMainArea::drawInfoScreenTime(seconds);
+            if (batteryMinutes != previousBatteryMinutes || stateChangedNow) {
+                DisplayMainArea::drawInfoScreenBatTime(batteryMinutes);
             }
             if (tickNr != previousTickNr || stateChangedNow) {
                 DisplayMainArea::drawInfoScreenTickNr(tickNr);
             }
             previousBatVoltRaw = batVoltRaw;
-            previousSeconds = seconds;
+            previousBatteryMinutes = batteryMinutes;
             previousTickNr = tickNr;
         }
     } else {

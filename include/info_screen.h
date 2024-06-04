@@ -24,6 +24,6 @@ private:
     BatteryTask& batteryTask;
     boolean displayInitialized = false;
     uint16_t previousBatVoltRaw = 0;
-    unsigned long previousSeconds = 0;
+    uint16_t previousBatteryMinutes = 0;
     unsigned long previousTickNr = 0;
 };

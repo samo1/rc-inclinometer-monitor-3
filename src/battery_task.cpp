@@ -1,6 +1,8 @@
 #include "battery_task.h"
+#include "debug.h"
 #include "display_header.h"
 #include "display_main_area.h"
+#include "preferences_enums.h"
 #include <Arduino.h>
 
 bool BatteryTask::Callback() {
@@ -9,12 +11,20 @@ bool BatteryTask::Callback() {
 }
 
 void BatteryTask::measureAndDrawBatteryIndicator() {
+    if (!previousBatteryTimeInitialized) {
+        readStoredBatteryTime();
+        previousBatteryTimeMinutes = storedBatteryTimeMinutes;
+        previousBatteryTimeInitialized = true;
+    }
     rawValue = analogRead(BAT_VOLT);
-    batteryPercentage = calculateBatteryPercentage(rawValue);
+    uint16_t minutesSinceStartup = (millis() - startupTime) / 60000;
+    batteryTimeMinutes = previousBatteryTimeMinutes + minutesSinceStartup;
+    storeCurrentBatteryTime();
+    calculateBatteryPercentage();
     DisplayHeader::drawBatteryIndicator(batteryPercentage);
 }
 
-double BatteryTask::calculateBatteryPercentage(uint16_t rawValue) {
+void BatteryTask::calculateBatteryPercentage() {
     //DisplayMainArea::drawNumber(rawValue);
     // USB power = 2835 or 2811-2813
     // 1S LiPo battery
@@ -43,9 +53,9 @@ double BatteryTask::calculateBatteryPercentage(uint16_t rawValue) {
     //         2723 01:38
     //         2695 01:50
     // 4xAA Xtar Li-om 4158 mAh
-    //         full = 3295
-    //         40 min = 2642
-    //         60 min = the same
+    //         full = 3295 - 3333
+    //         40 min = 2642 - 3290
+    //         60 min = 2642 - 3290
     //         110 min = 2586
     //         240 min = 2578
     //         322 min = 2639
@@ -65,15 +75,14 @@ double BatteryTask::calculateBatteryPercentage(uint16_t rawValue) {
     // percentage = (rawValue - 2600.0) / (3000.0 - 2600.0);
 
     // 4xAA Xtar Li-om 4158 mAh
-    if (rawValue > 2800) {
-        percentage = 1;
-    } else if (rawValue < 2400) {
+    if (rawValue < 2400) {
         percentage = 0;
     } else {
-        double maxTimeMillis = 25200000; // 7h
-        double remainingMllis = maxTimeMillis - millis();
-        percentage = remainingMllis / maxTimeMillis;
+        double remainingMinutes = maxBatteryTimeMinutes - batteryTimeMinutes;
+        percentage = remainingMinutes / maxBatteryTimeMinutes;
     }
+
+    // double batteryVoltage = (rawValue - 550.0) / 440.0;
 
     //double batteryVoltage = (rawValue * 2 * 3.3) / 4096;
     //double percentage = (batteryVoltage - 3.7) / (4.2 - 3.7);
@@ -83,7 +92,42 @@ double BatteryTask::calculateBatteryPercentage(uint16_t rawValue) {
     if (percentage > 1) {
         percentage = 1;
     }
-    return percentage;
+
+    batteryPercentage = percentage;
+}
+
+void BatteryTask::readStoredBatteryTime() {
+    DEBUG_PRINTLN("Reading battery time");
+    bool success = preferences.begin(PREFERENCES_NAME, true);
+    if (!success) {
+        DEBUG_PRINTLN("Failed to open preferences");
+    }
+    storedBatteryTimeMinutes = preferences.getUShort(PREFERENCES_BATTETY_TIME_MINUTES);
+    preferences.end();
+    batteryTimeMinutes = storedBatteryTimeMinutes;
+    DEBUG_PRINT("Battery time read: ");
+    DEBUG_PRINTLN(storedBatteryTimeMinutes);
+}
+
+void BatteryTask::storeCurrentBatteryTime() {
+    if (batteryTimeMinutes != storedBatteryTimeMinutes) {
+        DEBUG_PRINT("Writing battery time: ");
+        DEBUG_PRINTLN(batteryTimeMinutes);
+        bool success = preferences.begin(PREFERENCES_NAME, false);
+        if (!success) {
+            DEBUG_PRINTLN("Failed to open preferences");
+        }
+        preferences.putUShort(PREFERENCES_BATTETY_TIME_MINUTES, batteryTimeMinutes);
+        preferences.end();
+        storedBatteryTimeMinutes = batteryTimeMinutes;
+    }
+}
+
+void BatteryTask::resetBatteryTime() {
+    previousBatteryTimeMinutes = 0;
+    startupTime = millis();
+    batteryTimeMinutes = 0;
+    storeCurrentBatteryTime();
 }
 
 double BatteryTask::getBatteryPercentage() const {
@@ -92,4 +136,8 @@ double BatteryTask::getBatteryPercentage() const {
 
 uint16_t BatteryTask::getRawValue() const {
     return rawValue;
+}
+
+uint16_t BatteryTask::getBatteryTimeMinutes() const {
+    return batteryTimeMinutes;
 }

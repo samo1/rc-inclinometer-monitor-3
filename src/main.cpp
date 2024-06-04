@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <Preferences.h>
 #include <OneButton.h>
 #include "pin_config.h"
 #include <TFT_eSPI.h>
@@ -18,9 +19,10 @@
 
 TFT_eSPI tft = TFT_eSPI();
 
+Preferences preferences;
 StateManager stateManager;
 DisplayMainArea displayMainArea;
-BatteryTask batteryTask;
+BatteryTask batteryTask(preferences);
 PowerSavingTask powerSavingTask;
 Bluetooth bluetooth(stateManager);
 Inclinometer inclinometer(stateManager, displayMainArea);
@@ -45,12 +47,22 @@ static void handleButtonDownClick() {
     powerSavingTask.wakeUp();
     if (!lcdOff) {
         if (stateManager.getState() == State::speed
-            || stateManager.getState() == State::inclinometer
-            || stateManager.getState() == State::info) {
+            || stateManager.getState() == State::inclinometer) {
             powerSavingTask.sleep();
         }
         winch.handleButtonClick();
         dig.handleButtonClick();
+    }
+}
+
+static void handleButtonLongPressStop() {
+    bool lcdOff = powerSavingTask.isLcdOff();
+    powerSavingTask.wakeUp();
+    if (!lcdOff) {
+        if (stateManager.getState() == State::info) {
+            batteryTask.resetBatteryTime();
+            infoScreen.Callback();
+        }
     }
 }
 
@@ -84,6 +96,7 @@ void setup() {
     infoScreen.enable();
     buttonUp.attachClick(handleButtonUpClick);
     buttonDown.attachClick(handleButtonDownClick);
+    buttonDown.attachLongPressStop(handleButtonLongPressStop);
     powerSavingTask.wakeUp();
 }
 
