@@ -28,7 +28,7 @@ Bluetooth bluetooth(stateManager);
 Inclinometer inclinometer(stateManager, displayMainArea);
 Winch winch(stateManager, displayMainArea, bluetooth);
 Dig dig(stateManager, displayMainArea, bluetooth);
-Speed speed(stateManager, displayMainArea);
+Speed speed(stateManager, displayMainArea, bluetooth);
 InfoScreen infoScreen(stateManager, displayMainArea, batteryTask);
 OneButton buttonUp(BUTTON_2);
 OneButton buttonDown(BUTTON_1);
@@ -46,12 +46,13 @@ static void handleButtonDownClick() {
     bool lcdOff = powerSavingTask.isLcdOff();
     powerSavingTask.wakeUp();
     if (!lcdOff) {
-        if (stateManager.getState() == State::speed
-            || stateManager.getState() == State::inclinometer) {
+        if (stateManager.getState() == State::inclinometer) {
             powerSavingTask.sleep();
+        } else if (stateManager.getState() == State::winch) {
+            winch.handleButtonClick();
+        } else if (stateManager.getState() == State::dig) {
+            dig.handleButtonClick();
         }
-        winch.handleButtonClick();
-        dig.handleButtonClick();
     }
 }
 
@@ -62,6 +63,9 @@ static void handleButtonLongPressStop() {
         if (stateManager.getState() == State::info) {
             batteryTask.resetBatteryTime();
             infoScreen.Callback();
+        } else if (stateManager.getState() == State::speed) {
+            speed.resetTotalDistance();
+            speed.Callback();
         }
     }
 }

@@ -26,4 +26,5 @@ private:
     uint16_t previousBatVoltRaw = 0;
     uint16_t previousBatteryMinutes = 0;
     unsigned long previousTickNr = 0;
+    double previousDistance = 0.0;
 };

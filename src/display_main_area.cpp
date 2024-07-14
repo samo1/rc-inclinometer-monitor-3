@@ -109,6 +109,7 @@ void DisplayMainArea::drawSpeedInitial() {
     tft.drawString("      km/h", 0, 60, GFXFF);
     tft.setFreeFont(&FreeMono9pt7b);
     tft.drawString("      km", 100, 120, GFXFF);
+    tft.drawString("Reset km", 260, 140, FONT2);
 }
 
 void DisplayMainArea::drawSpeed(double speedKmh, double distanceMeters, unsigned long tickNr) {
@@ -127,7 +128,7 @@ void DisplayMainArea::drawSpeed(double speedKmh, double distanceMeters, unsigned
     tft.setFreeFont(&FreeMono9pt7b);
     tft.drawString(ss2.str().c_str(), 100, 120, GFXFF);
 
-    drawNumber(tickNr);
+    drawNumber(static_cast<int>(distanceMeters));
 }
 
 void DisplayMainArea::drawInfoScreenInitial() {
@@ -136,6 +137,7 @@ void DisplayMainArea::drawInfoScreenInitial() {
     tft.drawString("Bat. time: ", 20, 60, GFXFF);
     tft.drawString("Bat. sensor: ", 20, 80, GFXFF);
     tft.drawString("Speed sensor: ", 20, 100, GFXFF);
+    tft.drawString("Distance (m): ", 20, 120, GFXFF);
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.drawString("Reset bat.", 260, 140, FONT2);
 }
@@ -159,6 +161,14 @@ void DisplayMainArea::drawInfoScreenBatTime(uint16_t batteryMinutes) {
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
     tft.drawString(ss.str().c_str(), 152, 60, GFXFF);
+}
+
+void DisplayMainArea::drawInfoScreenDistance(double distance) {
+    std::ostringstream ss;
+    ss << static_cast<int>(distance) << "          ";
+    tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+    tft.setFreeFont(&FreeMono9pt7b);
+    tft.drawString(ss.str().c_str(), 174, 120, GFXFF);
 }
 
 void DisplayMainArea::drawInfoScreenTickNr(unsigned long tickNr) {

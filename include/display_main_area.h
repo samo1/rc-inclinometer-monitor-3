@@ -18,6 +18,7 @@ public:
     static void drawInfoScreenInitial();
     static void drawInfoScreenBatSensor(uint16_t batVoltRaw);
     static void drawInfoScreenBatTime(uint16_t batteryMinutes);
+    static void drawInfoScreenDistance(double distance);
     static void drawInfoScreenTickNr(unsigned long tickNr);
 private:
     TFT_eSprite jeepPitchSprite = TFT_eSprite(&tft);

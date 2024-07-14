@@ -7,18 +7,21 @@
 
 class Speed : public Task {
 public:
-    Speed(StateManager& stateManager, DisplayMainArea& displayMainArea)
+    Speed(StateManager& stateManager, DisplayMainArea& displayMainArea, Bluetooth& bluetooth)
             : Task(200, TASK_FOREVER, &scheduler, false),
               stateManager(stateManager),
-              displayMainArea(displayMainArea) {
+              displayMainArea(displayMainArea),
+              bluetooth(bluetooth) {
         setSchedulingOption(TASK_INTERVAL);
     }
 
     bool Callback() override;
+    void resetTotalDistance();
 
 private:
     StateManager& stateManager;
     DisplayMainArea& displayMainArea;
+    Bluetooth& bluetooth;
     double previousSpeed = 0.0;
     double previousDistance = 0.0;
     unsigned long previousTickNr = 0;
