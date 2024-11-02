@@ -28,6 +28,10 @@ See the [Controller](https://github.com/samo1/rc-inclinometer-unit) description 
 ## Installation on the controller
 
 Power is provided by the AA batteries in the controller. A new power wire is soldered directly on to the battery tray.
-As normal AA batteries last only very short time, a special Li-Po batteries are used, which can last for several hours. 
+As normal AA batteries last only very short time, Li-Po batteries are used, which can last for several hours. 
 
 ![Car Controller](documentation/controller.jpg)
+
+## See it in action
+
+[Youtube video](https://youtu.be/KxzOx_hJkfs)
