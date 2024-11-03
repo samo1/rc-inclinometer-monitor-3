@@ -34,4 +34,4 @@ As normal AA batteries last only very short time, Li-Po batteries are used, whic
 
 ## See it in action
 
-[Youtube video](https://youtu.be/KxzOx_hJkfs)
+[Youtube video](https://youtu.be/zrnESGQyN5k)
