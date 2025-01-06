@@ -40,6 +40,7 @@ public:
     static bool getWinchEnabled();
     static char getWinchMovement();
     static bool getFrontDigEnabled();
+    static bool getSoundEnabled();
     static double getSpeed();
     static double getDistance();
     static unsigned long getTickNr();

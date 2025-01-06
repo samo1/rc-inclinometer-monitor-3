@@ -25,7 +25,7 @@ DisplayMainArea displayMainArea;
 BatteryTask batteryTask(preferences);
 PowerSavingTask powerSavingTask;
 Bluetooth bluetooth(stateManager);
-Inclinometer inclinometer(stateManager, displayMainArea);
+Inclinometer inclinometer(stateManager, displayMainArea, bluetooth);
 Winch winch(stateManager, displayMainArea, bluetooth);
 Dig dig(stateManager, displayMainArea, bluetooth);
 Speed speed(stateManager, displayMainArea, bluetooth);
@@ -47,7 +47,7 @@ static void handleButtonDownClick() {
     powerSavingTask.wakeUp();
     if (!lcdOff) {
         if (stateManager.getState() == State::inclinometer) {
-            powerSavingTask.sleep();
+            inclinometer.handleButtonClick();
         } else if (stateManager.getState() == State::winch) {
             winch.handleButtonClick();
         } else if (stateManager.getState() == State::dig) {

@@ -7,21 +7,26 @@
 
 class Inclinometer : public Task {
 public:
-    Inclinometer(StateManager& stateManager, DisplayMainArea& displayMainArea)
+    Inclinometer(StateManager& stateManager, DisplayMainArea& displayMainArea, Bluetooth& bluetooth)
             : Task(200, TASK_FOREVER, &scheduler, false),
               stateManager(stateManager),
-              displayMainArea(displayMainArea) {
+              displayMainArea(displayMainArea),
+              bluetooth(bluetooth) {
         setSchedulingOption(TASK_INTERVAL);
     }
 
     bool Callback() override;
+    void handleButtonClick();
     bool isWarning();
 
 private:
     StateManager& stateManager;
     DisplayMainArea& displayMainArea;
+    Bluetooth& bluetooth;
+
     double previousPitch = 0.0;
     double previousRoll = 0.0;
+    bool previousSoundEnabled = false;
     bool warning = false;
 };
 

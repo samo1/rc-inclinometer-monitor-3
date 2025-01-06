@@ -8,6 +8,7 @@ public:
     void init();
     static void clear();
     void drawInclinometer(double pitch, double roll);
+    static void drawInclinometerButtonHelp(bool soundEnabled);
     static void drawNumber(uint16_t value, int32_t x, int32_t y, uint16_t textColor);
     static void drawWinch(bool enabled, char movement);
     static void drawWinchButtonHelp(bool enabled);

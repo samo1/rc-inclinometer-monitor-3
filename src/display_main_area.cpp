@@ -44,6 +44,16 @@ void DisplayMainArea::drawInclinometer(double pitch, double roll) {
     jeepRollSprite.pushRotated(rollAngle, TFT_BLACK);
 }
 
+void DisplayMainArea::drawInclinometerButtonHelp(bool soundEnabled) {
+    if (soundEnabled) {
+        tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+        tft.drawString("Snd-", 290, 140, FONT2);
+    } else {
+        tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+        tft.drawString("Snd+", 290, 140, FONT2);
+    }
+}
+
 void DisplayMainArea::drawNumber(uint16_t value, int32_t x = 0, int32_t y = 154, uint16_t textColor = TFT_DARKGREY) {
     std::ostringstream ss;
     ss << std::setfill(' ') << std::left << std::setw(5) << value << ' ';
