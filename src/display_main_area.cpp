@@ -128,7 +128,7 @@ void DisplayMainArea::drawSpeed(double speedKmh, double distanceMeters, unsigned
     tft.setFreeFont(&FreeMono9pt7b);
     tft.drawString(ss2.str().c_str(), 100, 120, GFXFF);
 
-    drawNumber(static_cast<int>(distanceMeters));
+    // drawNumber(static_cast<int>(distanceMeters));
 }
 
 void DisplayMainArea::drawInfoScreenInitial() {
