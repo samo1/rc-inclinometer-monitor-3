@@ -63,6 +63,41 @@ void StateManager::goToNextState() {
     updateDisplayHeader();
 }
 
+void StateManager::goToPreviousState() {
+    switch (currentState) {
+        case State::initial:
+            currentState = State::info;
+            stateChanged = true;
+            break;
+        case State::connecting:
+        case State::connected:
+        case State::disconnected:
+            // do nothing
+            break;
+        case State::speed:
+            currentState = State::info;
+            stateChanged = true;
+            break;
+        case State::inclinometer:
+            currentState = State::speed;
+            stateChanged = true;
+            break;
+        case State::winch:
+            currentState = State::inclinometer;
+            stateChanged = true;
+            break;
+        case State::dig:
+            currentState = State::winch;
+            stateChanged = true;
+            break;
+        case State::info:
+            currentState = State::dig;
+            stateChanged = true;
+            break;
+    }
+    updateDisplayHeader();
+}
+
 void StateManager::updateDisplayHeader() {
     switch (currentState) {
         case State::initial:

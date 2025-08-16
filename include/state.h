@@ -17,6 +17,7 @@ public:
     State getState();
     void setState(State state);
     void goToNextState();
+    void goToPreviousState();
     bool stateChangedNow();
 private:
     State currentState = State::initial;
