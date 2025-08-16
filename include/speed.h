@@ -16,7 +16,6 @@ public:
     }
 
     bool Callback() override;
-    void resetTotalDistance();
 
 private:
     StateManager& stateManager;

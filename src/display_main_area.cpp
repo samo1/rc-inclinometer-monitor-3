@@ -119,7 +119,6 @@ void DisplayMainArea::drawSpeedInitial() {
     tft.drawString("      km/h", 0, 60, GFXFF);
     tft.setFreeFont(&FreeMono9pt7b);
     tft.drawString("      km", 100, 120, GFXFF);
-    tft.drawString("Reset km", 260, 140, FONT2);
 }
 
 void DisplayMainArea::drawSpeed(double speedKmh, double distanceMeters, unsigned long tickNr) {
@@ -137,19 +136,19 @@ void DisplayMainArea::drawSpeed(double speedKmh, double distanceMeters, unsigned
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
     tft.drawString(ss2.str().c_str(), 100, 120, GFXFF);
-
-    // drawNumber(static_cast<int>(distanceMeters));
 }
 
 void DisplayMainArea::drawInfoScreenInitial() {
     tft.setTextColor(TFT_SKYBLUE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString("Bat. time: ", 20, 60, GFXFF);
-    tft.drawString("Bat. sensor: ", 20, 80, GFXFF);
-    tft.drawString("Speed sensor: ", 20, 100, GFXFF);
-    tft.drawString("Distance (m): ", 20, 120, GFXFF);
+    tft.drawString("Bat. time: ", 20, 55, GFXFF);
+    tft.drawString("Bat. sensor: ", 20, 75, GFXFF);
+    tft.drawString("Wheel size: ", 20, 95, GFXFF);
+    tft.drawString("Speed sensor: ", 20, 115, GFXFF);
+    tft.drawString("Distance (m): ", 20, 135, GFXFF);
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
-    tft.drawString("Reset bat.", 260, 140, FONT2);
+    tft.setFreeFont(&FreeMono9pt7b);
+    tft.drawString("Set", 290, 140, FONT2);
 }
 
 void DisplayMainArea::drawInfoScreenBatSensor(uint16_t batVoltRaw) {
@@ -157,7 +156,7 @@ void DisplayMainArea::drawInfoScreenBatSensor(uint16_t batVoltRaw) {
     ss << batVoltRaw << "    ";
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), 163, 80, GFXFF);
+    tft.drawString(ss.str().c_str(), 163, 75, GFXFF);
 }
 
 void DisplayMainArea::drawInfoScreenBatTime(uint16_t batteryMinutes) {
@@ -170,7 +169,7 @@ void DisplayMainArea::drawInfoScreenBatTime(uint16_t batteryMinutes) {
 
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), 152, 60, GFXFF);
+    tft.drawString(ss.str().c_str(), 141, 55, GFXFF);
 }
 
 void DisplayMainArea::drawInfoScreenDistance(double distance) {
@@ -178,7 +177,7 @@ void DisplayMainArea::drawInfoScreenDistance(double distance) {
     ss << static_cast<int>(distance) << "          ";
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), 174, 120, GFXFF);
+    tft.drawString(ss.str().c_str(), 174, 135, GFXFF);
 }
 
 void DisplayMainArea::drawInfoScreenTickNr(unsigned long tickNr) {
@@ -187,5 +186,48 @@ void DisplayMainArea::drawInfoScreenTickNr(unsigned long tickNr) {
 
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), 174, 100, GFXFF);
+    tft.drawString(ss.str().c_str(), 174, 115, GFXFF);
+}
+
+void DisplayMainArea::drawInfoScreenDpr(double mmDistancePerRevolution) {
+    std::ostringstream ss;
+    ss << std::fixed << std::setprecision(1) << mmDistancePerRevolution << "          ";
+    tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
+    tft.setFreeFont(&FreeMono9pt7b);
+    tft.drawString(ss.str().c_str(), 152, 95, GFXFF);
+}
+
+void DisplayMainArea::drawInfoScreenSelection(InfoScreenSelection selection) {
+    tft.setTextColor(TFT_GOLD, TFT_BLACK, true);
+    tft.setFreeFont(&FreeMono9pt7b);
+    switch (selection) {
+        case InfoScreenSelection::NONE:
+            tft.drawString("  ", 5, 55, GFXFF);
+            tft.drawString("  ", 5, 75, GFXFF);
+            tft.drawString("  ", 5, 95, GFXFF);
+            tft.drawString("  ", 5, 115, GFXFF);
+            tft.drawString("  ", 5, 135, GFXFF);
+            break;
+        case InfoScreenSelection::BATTERY:
+            tft.drawString("> ", 5, 55, GFXFF);
+            tft.drawString("  ", 5, 75, GFXFF);
+            tft.drawString("  ", 5, 95, GFXFF);
+            tft.drawString("  ", 5, 115, GFXFF);
+            tft.drawString("  ", 5, 135, GFXFF);
+            break;
+        case InfoScreenSelection::WHEEL_SIZE:
+            tft.drawString("  ", 5, 55, GFXFF);
+            tft.drawString("  ", 5, 75, GFXFF);
+            tft.drawString("> ", 5, 95, GFXFF);
+            tft.drawString("  ", 5, 115, GFXFF);
+            tft.drawString("  ", 5, 135, GFXFF);
+            break;
+        case InfoScreenSelection::DISTANCE:
+            tft.drawString("  ", 5, 55, GFXFF);
+            tft.drawString("  ", 5, 75, GFXFF);
+            tft.drawString("  ", 5, 95, GFXFF);
+            tft.drawString("  ", 5, 115, GFXFF);
+            tft.drawString("> ", 5, 135, GFXFF);
+            break;
+    }
 }

@@ -12,6 +12,7 @@ bool winchEnabled = false;
 char winchMovement = 'S';
 bool frontDigEnabled = false;
 bool soundEnabled = true;
+double mmDistancePerRevolution = 0.0;
 
 double currentSpeedValue = 0.0;
 double currectDistanceValue = 0.0;
@@ -50,6 +51,13 @@ static void winchInfoUpdate(std::string& stringData) {
         winchMovement = stringData[1];
         frontDigEnabled = (stringData[2] == 'E');
         soundEnabled = (stringData[3] == 'E');
+    }
+    if (stringData.length() >= 11) {
+        try {
+            mmDistancePerRevolution = std::stod(stringData.substr(4, 8));
+        }
+        catch (const std::invalid_argument &e) {}
+        catch (const std::out_of_range &e) {}
     }
 }
 
@@ -240,6 +248,10 @@ bool Bluetooth::getFrontDigEnabled() {
 
 bool Bluetooth::getSoundEnabled() {
     return soundEnabled;
+}
+
+double Bluetooth::getmmDistancePerRevolution() {
+    return mmDistancePerRevolution;
 }
 
 double Bluetooth::getSpeed() {

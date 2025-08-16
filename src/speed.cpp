@@ -1,7 +1,5 @@
 #include "speed.h"
 
-#define BLE_CMD_RESET_SPEED "reset_speed"
-
 bool Speed::Callback() {
     if (stateManager.getState() == State::speed) {
         double speed = Bluetooth::getSpeed();
@@ -22,11 +20,4 @@ bool Speed::Callback() {
         displayInitialized = false;
     }
     return true;
-}
-
-void Speed::resetTotalDistance() {
-    if (stateManager.getState() == State::speed) {
-        std::string cmd(BLE_CMD_RESET_SPEED);
-        bluetooth.sendCommand(cmd);
-    }
 }

@@ -1,6 +1,7 @@
 #ifndef DISPLAYMAINAREA_H
 #define DISPLAYMAINAREA_H
 
+#include "info_screen_selection.h"
 #include "lcd.h"
 
 class DisplayMainArea {
@@ -21,6 +22,8 @@ public:
     static void drawInfoScreenBatTime(uint16_t batteryMinutes);
     static void drawInfoScreenDistance(double distance);
     static void drawInfoScreenTickNr(unsigned long tickNr);
+    static void drawInfoScreenDpr(double mmDistancePerRevolution);
+    static void drawInfoScreenSelection(InfoScreenSelection selection);
 private:
     TFT_eSprite jeepPitchSprite = TFT_eSprite(&tft);
     TFT_eSprite jeepRollSprite = TFT_eSprite(&tft);
