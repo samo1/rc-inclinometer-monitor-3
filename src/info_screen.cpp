@@ -1,8 +1,8 @@
 #include "info_screen.h"
-#include <iomanip>
 #include <sstream>
 
 #define BLE_CMD_RESET_SPEED "reset_speed"
+#define BLE_CMD_SET_WHEEL_SIZE "set_wheel_size "
 
 double wheelSize1 = 49.500;
 double wheelSize2 = 43.478;
@@ -102,7 +102,7 @@ void InfoScreen::resetDistance() {
 
 void InfoScreen::setWheelSize(double wheelSize) {
     std::ostringstream ss;
-    ss << "set_wheel_size " << wheelSize;
+    ss << BLE_CMD_SET_WHEEL_SIZE << wheelSize;
     std::string cmd = ss.str();
     bluetooth.sendCommand(cmd);
 }
