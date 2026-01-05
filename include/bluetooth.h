@@ -54,6 +54,7 @@ private:
     bool connectInProgress = false;
     bool connected = false;
     bool doReconnect = false;
+    bool sendGetInfo = false;
     BLERemoteCharacteristic *pitchRollChar = nullptr;
     BLERemoteCharacteristic *winchInfoChar = nullptr;
     BLERemoteCharacteristic *winchControlChar = nullptr;

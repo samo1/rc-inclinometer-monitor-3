@@ -2,6 +2,7 @@
 #include "debug.h"
 
 #define BLUETOOTH_RECONNECT_DELAY_MS 5000
+#define BLE_CMD_GET_INFO "get_info"
 
 bool scanInProgress = false;
 
@@ -100,6 +101,11 @@ void Bluetooth::initialize() {
 }
 
 void Bluetooth::loop() {
+    if (connected && sendGetInfo) {
+        sendGetInfo = false;
+        std::string cmd(BLE_CMD_GET_INFO);
+        sendCommand(cmd);
+    }
     if (doConnect) {
         doConnect = false;
         if (!connect()) {
@@ -133,6 +139,7 @@ void Bluetooth::onConnect(BLEClient *pClient) {
     connectInProgress = false;
     connected = true;
     stateManager.setState(State::connected);
+    sendGetInfo = true;
 }
 
 void Bluetooth::onDisconnect(BLEClient *pClient) {
