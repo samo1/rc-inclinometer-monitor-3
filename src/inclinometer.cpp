@@ -1,5 +1,4 @@
 #include "inclinometer.h"
-#include "display_header.h"
 
 #define BLE_CMD_SND_ENABLE "snd_enable"
 #define BLE_CMD_SND_DISABLE "snd_disable"
@@ -30,11 +29,9 @@ void Inclinometer::handleButtonClick() {
     if (stateManager.getState() == State::inclinometer) {
         bool soundEnabled = Bluetooth::getSoundEnabled();
         if (soundEnabled) {
-            std::string cmd(BLE_CMD_SND_DISABLE);
-            bluetooth.sendCommand(cmd);
+            bluetooth.sendCommand(BLE_CMD_SND_DISABLE);
         } else {
-            std::string cmd(BLE_CMD_SND_ENABLE);
-            bluetooth.sendCommand(cmd);
+            bluetooth.sendCommand(BLE_CMD_SND_ENABLE);
         }
     }
 }

@@ -20,11 +20,9 @@ void Dig::handleButtonClick() {
     if (stateManager.getState() == State::dig) {
         bool enabled = Bluetooth::getFrontDigEnabled();
         if (enabled) {
-            std::string cmd(BLE_CMD_DIG_DISABLE);
-            bluetooth.sendCommand(cmd);
+            bluetooth.sendCommand(BLE_CMD_DIG_DISABLE);
         } else {
-            std::string cmd(BLE_CMD_DIG_ENABLE);
-            bluetooth.sendCommand(cmd);
+            bluetooth.sendCommand(BLE_CMD_DIG_ENABLE);
         }
     }
 }

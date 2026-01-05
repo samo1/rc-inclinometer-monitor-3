@@ -1,7 +1,6 @@
 #include "display_main_area.h"
 #include "gfx/inclinometer_images.h"
-#include <iomanip>
-#include <sstream>
+#include <cstdio>
 
 void DisplayMainArea::init() {
     clear();
@@ -25,15 +24,15 @@ void DisplayMainArea::drawInclinometer(double pitch, double roll) {
     int pitchAbsInt = abs(static_cast<int>(pitch));
     int rollAbsInt = abs(static_cast<int>(roll));
 
-    std::ostringstream ss1;
-    ss1 << std::setfill(' ') << std::left << std::setw(3) << pitchAbsInt << ' ';
-    std::ostringstream ss2;
-    ss2 << std::setfill(' ') << std::setw(3) << rollAbsInt << ' ';
+    char buf1[8];
+    char buf2[8];
+    snprintf(buf1, sizeof(buf1), "%-3d ", pitchAbsInt);
+    snprintf(buf2, sizeof(buf2), "%3d ", rollAbsInt);
 
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono18pt7b);
-    tft.drawString(ss1.str().c_str(), 8, 44, GFXFF);
-    tft.drawString(ss2.str().c_str(), 248, 44, GFXFF);
+    tft.drawString(buf1, 8, 44, GFXFF);
+    tft.drawString(buf2, 248, 44, GFXFF);
 
     auto pitchAngle = static_cast<int16_t>(180.0 + pitch);
     auto rollAngle = static_cast<int16_t>(180.0 - roll);
@@ -55,11 +54,11 @@ void DisplayMainArea::drawInclinometerButtonHelp(bool soundEnabled) {
 }
 
 void DisplayMainArea::drawNumber(uint16_t value, int32_t x = 0, int32_t y = 154, uint16_t textColor = TFT_DARKGREY) {
-    std::ostringstream ss;
-    ss << std::setfill(' ') << std::left << std::setw(5) << value << ' ';
+    char buf[8];
+    snprintf(buf, sizeof(buf), "%-5u ", value);
     tft.setTextColor(textColor, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), x, y, GFXFF);
+    tft.drawString(buf, x, y, GFXFF);
 }
 
 void DisplayMainArea::drawWinch(bool enabled, char movement) {
@@ -113,7 +112,6 @@ void DisplayMainArea::drawDigButtonHelp(bool enabled) {
 }
 
 void DisplayMainArea::drawSpeedInitial() {
-    std::ostringstream ss;
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono24pt7b);
     tft.drawString("      km/h", 0, 60, GFXFF);
@@ -125,17 +123,18 @@ void DisplayMainArea::drawSpeed(double speedKmh, double distanceMeters, unsigned
     int scaleSpeed = abs(static_cast<int>(speedKmh * 10.0));
     int scaleDistance = abs(static_cast<int>(distanceMeters / 100.0));
 
-    std::ostringstream ss1;
-    ss1 << std::setfill(' ') << std::right << std::setw(5) << scaleSpeed << ' ';
+    char buf1[8];
+    char buf2[8];
+    snprintf(buf1, sizeof(buf1), "%5d ", scaleSpeed);
+    snprintf(buf2, sizeof(buf2), "%5d ", scaleDistance);
+
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono24pt7b);
-    tft.drawString(ss1.str().c_str(), 0, 60, GFXFF);
+    tft.drawString(buf1, 0, 60, GFXFF);
 
-    std::ostringstream ss2;
-    ss2 << std::setfill(' ') << std::right << std::setw(5) << scaleDistance << ' ';
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss2.str().c_str(), 100, 120, GFXFF);
+    tft.drawString(buf2, 100, 120, GFXFF);
 }
 
 void DisplayMainArea::drawInfoScreenInitial() {
@@ -152,49 +151,48 @@ void DisplayMainArea::drawInfoScreenInitial() {
 }
 
 void DisplayMainArea::drawInfoScreenBatSensor(uint16_t batVoltRaw) {
-    std::ostringstream ss;
-    ss << batVoltRaw << "    ";
+    char buf[16];
+    snprintf(buf, sizeof(buf), "%u    ", batVoltRaw);
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), 163, 75, GFXFF);
+    tft.drawString(buf, 163, 75, GFXFF);
 }
 
 void DisplayMainArea::drawInfoScreenBatTime(uint16_t batteryMinutes) {
     auto hours = batteryMinutes / 60;
     batteryMinutes %= 60;
 
-    std::ostringstream ss;
-    ss << std::setfill('0') << std::setw(2) << hours << ':'
-       << std::setfill('0') << std::setw(2) << batteryMinutes << ' ';
+    char buf[16];
+    snprintf(buf, sizeof(buf), "%02u:%02u ", hours, batteryMinutes);
 
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), 141, 55, GFXFF);
+    tft.drawString(buf, 141, 55, GFXFF);
 }
 
 void DisplayMainArea::drawInfoScreenDistance(double distance) {
-    std::ostringstream ss;
-    ss << static_cast<int>(distance) << "          ";
+    char buf[24];
+    snprintf(buf, sizeof(buf), "%d          ", static_cast<int>(distance));
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), 174, 135, GFXFF);
+    tft.drawString(buf, 174, 135, GFXFF);
 }
 
 void DisplayMainArea::drawInfoScreenTickNr(unsigned long tickNr) {
-    std::ostringstream ss;
-    ss << std::setfill(' ') << std::left << std::setw(6) << tickNr << ' ';
+    char buf[16];
+    snprintf(buf, sizeof(buf), "%-6lu ", tickNr);
 
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), 174, 115, GFXFF);
+    tft.drawString(buf, 174, 115, GFXFF);
 }
 
 void DisplayMainArea::drawInfoScreenDpr(double mmDistancePerRevolution) {
-    std::ostringstream ss;
-    ss << std::fixed << std::setprecision(1) << mmDistancePerRevolution << "          ";
+    char buf[24];
+    snprintf(buf, sizeof(buf), "%.1f          ", mmDistancePerRevolution);
     tft.setTextColor(TFT_WHITE, TFT_BLACK, true);
     tft.setFreeFont(&FreeMono9pt7b);
-    tft.drawString(ss.str().c_str(), 152, 95, GFXFF);
+    tft.drawString(buf, 152, 95, GFXFF);
 }
 
 void DisplayMainArea::drawInfoScreenSelection(InfoScreenSelection selection) {

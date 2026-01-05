@@ -33,7 +33,7 @@ public:
     void onResult(BLEAdvertisedDevice advertisedDevice) override;
     void onConnect(BLEClient *pClient) override;
     void onDisconnect(BLEClient *pClient) override;
-    void sendCommand(std::string& cmd);
+    void sendCommand(const char* cmd);
 
     static double getPitch();
     static double getRoll();

@@ -25,11 +25,9 @@ void Winch::handleButtonClick() {
     if (stateManager.getState() == State::winch) {
         bool enabled = Bluetooth::getWinchEnabled();
         if (enabled) {
-            std::string cmd(BLE_CMD_WINCH_DISABLE);
-            bluetooth.sendCommand(cmd);
+            bluetooth.sendCommand(BLE_CMD_WINCH_DISABLE);
         } else {
-            std::string cmd(BLE_CMD_WINCH_ENABLE);
-            bluetooth.sendCommand(cmd);
+            bluetooth.sendCommand(BLE_CMD_WINCH_ENABLE);
         }
     }
 }

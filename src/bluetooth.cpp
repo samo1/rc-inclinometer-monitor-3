@@ -103,8 +103,7 @@ void Bluetooth::initialize() {
 void Bluetooth::loop() {
     if (connected && sendGetInfo) {
         sendGetInfo = false;
-        std::string cmd(BLE_CMD_GET_INFO);
-        sendCommand(cmd);
+        sendCommand(BLE_CMD_GET_INFO);
     }
     if (doConnect) {
         doConnect = false;
@@ -130,6 +129,10 @@ void Bluetooth::onResult(BLEAdvertisedDevice advertisedDevice) {
         BLEDevice::getScan()->stop();
         DEBUG_PRINTLN("Device found, scan stopped");
         scanInProgress = false;
+        if (serverDevice != nullptr) {
+            delete serverDevice;
+            serverDevice = nullptr;
+        }
         serverDevice = new BLEAdvertisedDevice(advertisedDevice);
         doConnect = true;
     }
@@ -273,7 +276,7 @@ unsigned long Bluetooth::getTickNr() {
     return tickNr;
 }
 
-void Bluetooth::sendCommand(std::string& cmd) {
+void Bluetooth::sendCommand(const char* cmd) {
     if (winchControlChar->canWrite()) {
         winchControlChar->writeValue(cmd, true);
     }
